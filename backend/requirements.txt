@@ -4,7 +4,9 @@ django-jazzmin==2.6.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 PyJWT==2.6.0
+python-dotenv==1.0.1
 pytz==2024.1
+setuptools==69.2.0
 shortuuid==1.0.13
 sqlparse==0.4.4
 tzdata==2024.1
