@@ -1,7 +1,7 @@
 import { useAuthStore } from '../store/auth'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
-import Cookie from 'js-cookie'
+import Cookies from 'js-Cookies'
 
 
 
@@ -13,14 +13,13 @@ export const login = async (email, password) => {
             setAuthUser(data.access, data.refresh)
             // Alert - Sign in Succesfully
         }
-
+        
         return {data, error:null}
     }
     catch (error) {
         return {data:null, error: error.response.data?.detail || error.message }
     }
 }
-
 
 
 export const register = async (full_name, email, phone, password, password2) => {
@@ -42,19 +41,17 @@ export const register = async (full_name, email, phone, password, password2) => 
 }
 
 
-
 export const logout = () => {
-    Cookie.remove('access_token')
-    Cookie.remove('refresh_token')
+    Cookies.remove('access_token')
+    Cookies.remove('refresh_token')
     useAuthStore.setState({ allUserData: null })
     // Alert - You have been logged out
 }
 
 
-
 export const setUser = async () => {
-    const access_token = Cookie.get('access_token')
-    const refresh_token = Cookie.get('refresh_token')
+    const access_token = Cookies.get('access_token')
+    const refresh_token = Cookies.get('refresh_token')
 
     if(!access_token && !refresh_token) {
         return;
@@ -69,26 +66,26 @@ export const setUser = async () => {
 }
 
 
-
 export const setAuthUser = (access_token, refresh_token) => {
-    Cookie.set('access_token', access_token, {
+    Cookies.set('access_token', access_token, {
         expires: 1,
         secure: true
     })
-    Cookie.set('refresh_token', refresh_token, {
+    Cookies.set('refresh_token', refresh_token, {
         expires: 7,
         secure: true
     })  
     const user = jwt_decode(access_token) ?? null
     
     if (user) {
-        userAuthStore.getState().setUser(user)
+        useAuthStore.getState().setUser(user)
     }
     useAuthStore.getState().setLoading(false)
 }
 
+
 export const getRefreshToken = async () => {
-    const refresh_token = Cookie.get('refresh_token')
+    const refresh_token = Cookies.get('refresh_token')
     const response = await axios.post('user/token/refresh/', {
         refresh: refresh_token
     })
