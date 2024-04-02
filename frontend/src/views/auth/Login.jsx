@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
-
 import { useNavigate, Link } from 'react-router-dom'
-
 import { login } from '../../utils/auth'
-
 import { useAuthStore } from '../../store/auths'
 
 
@@ -11,11 +8,11 @@ import { useAuthStore } from '../../store/auths'
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-
-    // Access the isLoggedIn function from the store
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn());
+
     console.log(password)
     const resetForm = () => {
         setEmail("");

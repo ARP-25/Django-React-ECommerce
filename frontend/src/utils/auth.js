@@ -25,14 +25,14 @@ export const login = async (email, password) => {
 
 export const register = async (full_name, email, phone, password, password2) => {
     try {
-        const { data } = await axios.post("user/register", { 
+        const { data } = await apiInstance.post("user/register/", { 
             full_name,
             email,
             phone,
             password,
             password2 
         })
-        await login(email, password)
+        //await login(email, password)
         // Alert - Signed up successfully
         return { data, error: null }
     }
