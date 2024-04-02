@@ -1,13 +1,14 @@
-import { useAuthStore } from '../store/auth'
-import axios from 'axios'
-import jwt_decode from 'jwt-decode'
-import Cookies from 'js-Cookies'
+import { useAuthStore } from '../store/auths';
 
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+import Cookies from 'js-cookie';
+import apiInstance from './axios'
 
 
 export const login = async (email, password) => {
     try {
-        const {data, status } = await axios.post("user/token", { email, password })
+        const {data, status } = await apiInstance.post("user/token/", { email, password })
 
         if (status===200) {
             setAuthUser(data.access, data.refresh)
