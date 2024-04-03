@@ -45,5 +45,7 @@ class PasswordResetEmailVerificationView(generics.RetrieveAPIView):
             link = f"http://localhost:5173/create-new-password?otp={otp}&uidb64={uidb64}"
             print("link ======", link)
 
+            # send email
+            
         return user
     
