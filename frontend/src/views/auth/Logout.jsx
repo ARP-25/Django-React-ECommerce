@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { logout } from "../../utils/auth";
 import { Link } from "react-router-dom";
 
+
 function Logout() {
     useEffect(() => {
         logout();

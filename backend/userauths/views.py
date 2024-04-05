@@ -49,3 +49,27 @@ class PasswordResetEmailVerificationView(generics.RetrieveAPIView):
             
         return user
     
+
+class PasswordChangeView(generics.UpdateAPIView):
+    permisson_classes = [AllowAny,]
+    serializer_class = UserSerializer
+
+    def create (self, request, *args, **kwargs):
+        payload = request.data
+        otp = payload.get('otp')
+        uidb64 = payload.get('reset_token')
+        reset_token = payload.get('reset_token')
+        password = payload.get('password')
+
+        user = User.objects.get(id=uidb64, otp=otp)
+
+        if user:
+            user.set_password(password)
+            user.otp = ""
+            user.reset_token = ""
+            user.save()
+
+            return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+
+        else:
+            return Response({'message': 'An error occured'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
