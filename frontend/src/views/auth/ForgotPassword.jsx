@@ -6,14 +6,19 @@ import apiInstance from "../../utils/axios";
 
 function ForgotPassword() {
     const [email, setEmail] = useState("");
-    console.log(email);
 
-    const handleSubmit = () => {
+    const navigate = useNavigate();
+
+    const handleSubmit = async () => {
         try {
-            apiInstance.get(`/user/password-reset/${email}/`).then((res) => {
-                console.log(res.data);
-            });
+            await apiInstance
+                .get(`/user/password-reset/${email}/`)
+                .then((res) => {
+                    alert("Password reset link sent to your email");
+                    //navigate("/create-new-password");
+                });
         } catch (error) {
+            alert("Email not found");
             console.log(error);
         }
     };
@@ -23,7 +28,7 @@ function ForgotPassword() {
             <h1>Forgot Password</h1>
             <input
                 onChange={(e) => setEmail(e.target.value)}
-                type="text"
+                type="email"
                 placeholder="Enter Email"
                 name=""
                 id=""

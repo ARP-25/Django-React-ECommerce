@@ -50,26 +50,30 @@ class PasswordResetEmailVerificationView(generics.RetrieveAPIView):
         return user
     
 
-class PasswordChangeView(generics.UpdateAPIView):
-    permisson_classes = [AllowAny,]
+class PasswordChangeView(generics.CreateAPIView):
+    permission_classes = [AllowAny,]
     serializer_class = UserSerializer
 
-    def create (self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         payload = request.data
-        otp = payload.get('otp')
-        uidb64 = payload.get('reset_token')
-        reset_token = payload.get('reset_token')
-        password = payload.get('password')
 
-        user = User.objects.get(id=uidb64, otp=otp)
+        try:
+            otp = payload.get('otp')
+            uidb64 = payload.get('uidb64') 
+            password = payload.get('password')  
+            user = User.objects.get(otp=otp, id=int(uidb64))
+   
+        except User.DoesNotExist:
+            # Handle user not found
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        except Exception as e:
+            # Handle any other exceptions
+            return Response({'message': f'Unexpected error: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        if user:
-            user.set_password(password)
-            user.otp = ""
-            user.reset_token = ""
-            user.save()
+        # Set the new password for the user
+        user.set_password(password)
+        user.otp = ""
+        user.save()
 
-            return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
-
-        else:
-            return Response({'message': 'An error occured'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
