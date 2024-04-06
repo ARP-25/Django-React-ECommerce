@@ -18,11 +18,6 @@ function CreatePassword() {
             return;
         } else {
             const formdata = new FormData();
-            console.log("Sending request with data:", {
-                password: password,
-                otp: otp,
-                uidb64: uidb64,
-            });
             formdata.append("password", password);
             formdata.append("otp", otp);
             formdata.append("uidb64", uidb64);
