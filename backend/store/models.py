@@ -64,4 +64,46 @@ class Product(models.Model):
             super(Product, self).save(*args, **kwargs)
 
 
+class Gallery(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.FileField(upload_to='gallery/', default='gallery.jpg', null=True, blank=True)
+    active = models.BooleanField(default=True)
+    gid = ShortUUIDField(unique=True, length=10, prefix="G", alphabet="abcdefg123456789")
+
+    def __str__(self):
+        return self.product.title
+    
+    class Meta:
+        verbose_name = 'Gallery'
+        verbose_name_plural = 'Galleries'
+
+
+class Specification(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    title = models.CharField(max_length=1000, help_text='Specification title', null=True, blank=True)
+    content = models.TextField(max_length=1000, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+    
+
+class Size(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=1000, help_text='Specification title', null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0.00)
+
+    def __str__(self):
+        return self.name
+    
+
+class Color(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=1000, help_text='Specification title', null=True, blank=True)
+    color_code = models.CharField(max_length=100, help_text='Color code', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+
 
