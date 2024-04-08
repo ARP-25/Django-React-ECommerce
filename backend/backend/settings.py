@@ -60,6 +60,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # Third Party Middleware
+    'corsheaders.middleware.CorsMiddleware',
+    # Django Middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,8 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Third Party Middleware
-    'corsheaders.middleware.CorsMiddleware',
+
 ]
 
 
@@ -153,9 +155,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Configure CORS
+# For development
+CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Assuming your React app runs on this port
+    "http://localhost:5173",
 ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

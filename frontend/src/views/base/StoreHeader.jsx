@@ -284,19 +284,19 @@ function StoreHeader() {
                             </button>
                         </div>
                         <Link
-                            className="btn btn-primary me-2"
+                            className="btn btn-primary me-2 mt-2 mt-lg-0"
                             to="/login"
                         >
                             Login
                         </Link>
                         <Link
-                            className="btn btn-primary me-2"
+                            className="btn btn-primary me-2 mt-2 mt-lg-0"
                             to="/register"
                         >
                             Register
                         </Link>
                         <Link
-                            className="btn btn-danger"
+                            className="btn btn-danger mt-2 mt-lg-0"
                             to="/cart/"
                         >
                             <i className="fas fa-shopping-cart"></i>{" "}
