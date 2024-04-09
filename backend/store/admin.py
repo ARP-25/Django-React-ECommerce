@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem
+from .models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem, ProductFaq, Review, Wishlist, Notification, Coupon
 
 
 class GalleryInline(admin.TabularInline):
@@ -25,6 +25,37 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['title']
     inlines = [GalleryInline, SpecificationInline, SizeInline, ColorInline]
 
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'qty', 'price', 'total']
+    search_fields = ['user__username', 'product__title']
+
+class CartOrderAdmin(admin.ModelAdmin):
+    list_display = ['oid', 'buyer', 'total', 'payment_status', 'order_status']
+    search_fields = ['buyer__username', 'oid']
+
+class CartOrderItemAdmin(admin.ModelAdmin):
+    list_display = ['order', 'product', 'qty', 'price']
+    search_fields = ['order__oid', 'product__title']
+
+class ProductFaqAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'question', 'active']
+    search_fields = ['user__username', 'product__title', 'question']
+
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'rating', 'active']
+    search_fields = ['user__username', 'product__title']
+
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product']
+    search_fields = ['user__username', 'product__title']
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'vendor', 'seen']
+    search_fields = ['user__username', 'vendor__name']
+
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ['code', 'vendor', 'discount', 'active']
+    search_fields = ['code', 'vendor__name']
 
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
@@ -32,3 +63,8 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(Cart)
 admin.site.register(CartOrder)
 admin.site.register(CartOrderItem)
+admin.site.register(ProductFaq, ProductFaqAdmin)
+admin.site.register(Review, ReviewAdmin)
+admin.site.register(Wishlist, WishlistAdmin)
+admin.site.register(Notification, NotificationAdmin)
+admin.site.register(Coupon, CouponAdmin)
