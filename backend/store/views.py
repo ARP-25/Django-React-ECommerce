@@ -20,6 +20,15 @@ class ProductListAPIView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
+class ProductDetailAPIView(generics.RetrieveAPIView):
+    #queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        return Product.objects.get(slug=self.kwargs.get('slug'))
+
+
 
 
 
