@@ -71,7 +71,7 @@ class ProductSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super(ProductSerializer, self).__init__(*args, **kwargs)
         request = kwargs.get('context', {}).get('request')
-        if request.METHOD == 'POST':
+        if request.method == 'POST':
             self.Meta.depth = 0
         else:
             self.Meta.depth = 3
