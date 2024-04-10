@@ -51,23 +51,40 @@ class Product(models.Model):
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.title
+
+    def gallery(self):
+        return Gallery.objects.filter(product=self)
     
+    def specification(self):
+        return Specification.objects.filter(product=self)
+    
+    def size(self):
+        return Size.objects.filter(product=self)
+    
+    def color(self):
+        return Color.objects.filter(product=self)
+    
+    def product_rating(self):
+        product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
+        return product_rating['avg_rating']
+    
+    def rating_count(self):
+        return Review.objects.filter(product=self).count()
+    
+
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
         ordering = ['-date']
 
+    def __str__(self):
+        return self.title
+    
     def save(self, *args, **kwargs):
         if self.slug == None or self.slug =='': 
             self.slug = slugify(self.title)
             super(Product, self).save(*args, **kwargs)
 
-    def product_rating(self):
-        product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
-        return product_rating['avg_rating']
-    
     def save(self, *args, **kwargs):
         self.rating = self.product_rating()
         super(Product, self).save(*args, **kwargs)

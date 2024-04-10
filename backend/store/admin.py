@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem, ProductFaq, Review, Wishlist, Notification, Coupon
 
 
+# Inline classes for the admin panel
 class GalleryInline(admin.TabularInline):
     model = Gallery
     extra = 1
@@ -18,6 +19,7 @@ class ColorInline(admin.TabularInline):
     extra = 1
 
 
+# Admin classes for the models
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['title', 'price', 'category', 'stock_qty', 'in_stock', 'shipping_amount', 'vendor', 'featured']
     list_editable = ['featured']
@@ -57,9 +59,10 @@ class CouponAdmin(admin.ModelAdmin):
     list_display = ['code', 'vendor', 'discount', 'active']
     search_fields = ['code', 'vendor__name']
 
+
+# Register the models to the admin panel
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
-
 admin.site.register(Cart)
 admin.site.register(CartOrder)
 admin.site.register(CartOrderItem)
