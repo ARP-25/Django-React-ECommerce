@@ -34,7 +34,51 @@ class ColorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class VendorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vendor
+        fields = '__all__'
+
+
+class ProductReadSerializer(serializers.ModelSerializer):
+    # Nested Serializer
+    gallery = GallerySerializer(many=True, read_only=True)
+    color = ColorSerializer(many=True, read_only=True)
+    specification = SpecificationSerializer(many=True, read_only=True)
+    size = SizeSerializer(many=True, read_only=True)
+    vendor = VendorSerializer(read_only=True)
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'title',
+            'image',
+            'description',
+            'category',
+            'price',
+            'old_price',
+            'shipping_amount',
+            'stock_qty',
+            'in_stock',
+            'status',
+            'featured',
+            'views',
+            'rating',
+            'vendor',
+            'pid',
+            'slug',
+            'date',
+            'gallery',
+            'color',
+            'specification',
+            'size',
+            'product_rating',
+            'rating_count',
+        ]
+        depth = 3
+
+class ProductWriteSerializer(serializers.ModelSerializer):
+    # Nested Serializer
     gallery = GallerySerializer(many=True, read_only=True)
     color = ColorSerializer(many=True, read_only=True)
     specification = SpecificationSerializer(many=True, read_only=True)
@@ -68,14 +112,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'rating_count',
         ]
 
-    def __init__(self, *args, **kwargs):
-        super(ProductSerializer, self).__init__(*args, **kwargs)
-        request = kwargs.get('context', {}).get('request')
-        if request.method == 'POST':
-            self.Meta.depth = 0
-        else:
-            self.Meta.depth = 3
-            
+
+    
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
@@ -155,21 +193,6 @@ class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
         fields = '__all__'
-
-
-# Vendor Serializer
-class VendorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Vendor
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(VendorSerializer, self).__init__(*args, **kwargs)
-        request = kwargs.get('context', {}).get('request')
-        if request.METHOD == 'POST':
-            self.Meta.depth = 0
-        else:
-            self.Meta.depth = 3
 
 
 class ReviewSerializer(serializers.ModelSerializer):

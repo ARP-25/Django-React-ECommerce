@@ -45,12 +45,21 @@ class Product(models.Model):
 
     featured = models.BooleanField(default=False)
     views = models.PositiveIntegerField(default=0)
-    rating = models.PositiveIntegerField(default=0)
+    rating = models.PositiveIntegerField(default=0, null=True, blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     pid = ShortUUIDField(unique=True, length=10, prefix="P", alphabet="abcdefg123456789", null=True, blank=True)
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if self.slug == None or self.slug =='': 
+            self.slug = slugify(self.title)
+            super(Product, self).save(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        super(Product, self).save(*args, **kwargs)
+        self.rating = self.product_rating()
+        super(Product, self).save(update_fields=['rating'])
 
     def gallery(self):
         return Gallery.objects.filter(product=self)
@@ -80,14 +89,7 @@ class Product(models.Model):
     def __str__(self):
         return self.title
     
-    def save(self, *args, **kwargs):
-        if self.slug == None or self.slug =='': 
-            self.slug = slugify(self.title)
-            super(Product, self).save(*args, **kwargs)
 
-    def save(self, *args, **kwargs):
-        self.rating = self.product_rating()
-        super(Product, self).save(*args, **kwargs)
 
 
 

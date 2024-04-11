@@ -9,6 +9,7 @@ import CreatePassword from "./views/auth/CreatePassword";
 import StoreHeader from "./views/base/StoreHeader";
 import StoreFooter from "./views/base/StoreFooter";
 import MainWrapper from "./layout/MainWrapper";
+import Product from "./views/store/Product";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -17,30 +18,14 @@ function App() {
         <BrowserRouter>
             <StoreHeader />
             <Routes>
-                <Route
-                    path="/login"
-                    element={<Login />}
-                />
-                <Route
-                    path="/register"
-                    element={<Register />}
-                />
-                <Route
-                    path="/"
-                    element={<Dashboard />}
-                />
-                <Route
-                    path="/logout"
-                    element={<Logout />}
-                />
-                <Route
-                    path="/forgot-password"
-                    element={<ForgotPassword />}
-                />
-                <Route
-                    path="/create-new-password"
-                    element={<CreatePassword />}
-                />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/create-new-password" element={<CreatePassword />} />
+                {/*  Store Components */}
+                <Route path="/" element={<Product />} />
             </Routes>
             <StoreFooter />
         </BrowserRouter>

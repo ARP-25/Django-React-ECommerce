@@ -12,8 +12,10 @@ class Vendor(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=500, unique=True, null=True, blank=True)
 
+
     def __str__(self):
-        return self.name
+        return self.name if self.name else ""
+
 
     class Meta:
         verbose_name = 'Vendor'
