@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import apiInstance from "../../utils/axios";
+import { Link } from "react-router-dom";
 
 function Product() {
     const [products, setProducts] = useState([]);
@@ -42,23 +43,29 @@ function Product() {
                                                 className="bg-image hover-zoom ripple"
                                                 data-mdb-ripple-color="light"
                                             >
-                                                <img
-                                                    src={p.image}
-                                                    className="w-100"
-                                                    style={{
-                                                        width: "100%",
-                                                        height: "250px",
-                                                        objectFit: "cover",
-                                                    }}
-                                                />
+                                                <Link to={`/detail/${p.slug}`}>
+                                                    <img
+                                                        src={p.image}
+                                                        className="w-100"
+                                                        style={{
+                                                            width: "100%",
+                                                            height: "250px",
+                                                            objectFit: "cover",
+                                                        }}
+                                                    />
+                                                </Link>
                                             </div>
                                             <div className="card-body">
-                                                <a href="" className="text-reset">
+                                                <Link
+                                                    to={`/detail/${p.slug}`}
+                                                    className="text-reset"
+                                                >
                                                     <h5 className="card-title mb-3">{p.title}</h5>
-                                                </a>
-                                                <a href="" className="text-reset">
+                                                </Link>
+
+                                                <Link to={`/detail/${p.slug}`}>
                                                     <p>{p.category?.title}</p>
-                                                </a>
+                                                </Link>
                                                 <div className="d-flex justify-content-center">
                                                     <h6 className="mb-3">${p.price}</h6>
                                                     <h6 className="mb-3 text-muted ms-2">
@@ -172,7 +179,7 @@ function Product() {
                                 {categories?.map((c, index) => (
                                     <div key={c.id} className="col-lg-2">
                                         <img
-                                            src="https://darrensaines.no/wp-content/uploads/2020/02/dummy-1.png"
+                                            src={c.image}
                                             style={{
                                                 width: "100px",
                                                 height: "100px",
