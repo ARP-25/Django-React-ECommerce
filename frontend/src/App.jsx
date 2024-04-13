@@ -24,6 +24,7 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/create-new-password" element={<CreatePassword />} />
                 {/*  Store Components */}
                 <Route path="/" element={<Product />} />

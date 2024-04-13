@@ -6,7 +6,7 @@ function Product() {
     const [products, setProducts] = useState([]);
     useEffect(() => {
         const response = apiInstance
-            .get("/product")
+            .get("/products")
             .then((response) => {
                 setProducts(response.data);
             })
