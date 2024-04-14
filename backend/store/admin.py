@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem, ProductFaq, Review, Wishlist, Notification, Coupon
+from .models import Category, Product, Gallery, Specification, Size, Color, Cart, CartOrder, CartOrderItem, ProductFaq, Review, Wishlist, Notification, Coupon, Tax
 
 
 # Inline classes for the admin panel
@@ -71,3 +71,4 @@ admin.site.register(Review, ReviewAdmin)
 admin.site.register(Wishlist, WishlistAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(Coupon, CouponAdmin)
+admin.site.register(Tax)
