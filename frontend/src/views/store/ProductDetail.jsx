@@ -290,36 +290,39 @@ function ProductDetail() {
 
                 {/* Tab List Content Start */}
                 <div className="tab-content" id="pills-tabContent">
+                    {/* Category and Specification START */}
                     <div
                         className="tab-pane fade show active"
                         id="pills-home"
                         role="tabpanel"
                         aria-labelledby="pills-home-tab"
                         tabIndex={0}
-                    ></div>
-                    {/* Category and Specification START */}
-                    <div className="table-responsive">
-                        <table className="table table-sm table-borderless mb-0">
-                            <tbody>
-                                <tr>
-                                    <th className="ps-0 w-25" scope="row">
-                                        <strong>Category</strong>
-                                    </th>
-                                    <td>{product.category?.title}</td>
-                                </tr>
-
-                                {specifications.map((s, index) => (
-                                    <tr key={s.id}>
+                    >
+                        <div className="table-responsive">
+                            <table className="table table-sm table-borderless mb-0">
+                                <tbody>
+                                    <tr>
                                         <th className="ps-0 w-25" scope="row">
-                                            <strong>{s.title}</strong>
+                                            <strong>Category</strong>
                                         </th>
-                                        <td>{s.content}</td>
+                                        <td>{product.category?.title}</td>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+
+                                    {specifications.map((s, index) => (
+                                        <tr key={s.id}>
+                                            <th className="ps-0 w-25" scope="row">
+                                                <strong>{s.title}</strong>
+                                            </th>
+                                            <td>{s.content}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     {/* Category and Specification END */}
+
+                    {/* Vendor START */}
                     <div
                         className="tab-pane fade"
                         id="pills-profile"
@@ -350,6 +353,9 @@ function ProductDetail() {
                             </div>
                         </div>
                     </div>
+                    {/* Vendor END */}
+
+                    {/* Review START */}
                     <div
                         className="tab-pane fade"
                         id="pills-contact"
@@ -442,6 +448,8 @@ function ProductDetail() {
                             </div>
                         </div>
                     </div>
+                    {/* Review END */}
+
                     <div
                         className="tab-pane fade"
                         id="pills-disabled"
