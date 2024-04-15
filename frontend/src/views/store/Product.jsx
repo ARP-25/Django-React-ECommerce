@@ -4,6 +4,16 @@ import { Link } from "react-router-dom";
 
 function Product() {
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [colorValue, setColorValue] = useState("No Color");
+    const [sizeValue, setSizeValue] = useState("No Size");
+
+    const [quantityValue, setQuantityValue] = useState(1);
+
+    const [selectedProduct, setSelectedProduct] = useState({});
+    const [selectedColors, setSelectedColors] = useState({});
+    const [selectedSizes, setSelectedSizes] = useState({});
+
     useEffect(() => {
         const response = apiInstance
             .get("/products")
@@ -15,7 +25,6 @@ function Product() {
             });
     }, []);
 
-    const [categories, setCategories] = useState([]);
     useEffect(() => {
         const response = apiInstance
             .get("/category")
@@ -26,6 +35,29 @@ function Product() {
                 console.log(error);
             });
     }, []);
+
+    const handleColorButtonClick = (event, product_id, color_name) => {
+        setColorValue(color_name);
+        setSelectedProduct(product_id);
+        setSelectedColors((prevSelectedColors) => ({
+            ...prevSelectedColors,
+            [product_id]: color_name,
+        }));
+    };
+
+    const handleSizeButtonClick = (event, product_id, size_name) => {
+        setSizeValue(size_name);
+        setSelectedProduct(product_id);
+        setSelectedSizes((prevSelectedSize) => ({
+            ...prevSelectedSize,
+            [product_id]: size_name,
+        }));
+    };
+
+    const handleQuantityChange = (event, product_id) => {
+        setQuantityValue(event.target.value);
+        setSelectedProduct(product_id);
+    };
 
     return (
         <>
@@ -89,61 +121,97 @@ function Product() {
                                                         className="dropdown-menu"
                                                         aria-labelledby="dropdownMenuClickable"
                                                     >
+                                                        {/*  Product Quantity START */}
                                                         <div className="d-flex flex-column">
                                                             <li className="p-1">
-                                                                <b>Size</b>: XL
+                                                                <b className="pe-1">Quantity:</b>
                                                             </li>
                                                             <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
-                                                                <li>
-                                                                    <button className="btn btn-secondary btn-sm me-2 mb-1">
-                                                                        XXL
-                                                                    </button>
-                                                                </li>
-                                                                <li>
-                                                                    <button className="btn btn-secondary btn-sm me-2 mb-1">
-                                                                        XXL
-                                                                    </button>
-                                                                </li>
-                                                                <li>
-                                                                    <button className="btn btn-secondary btn-sm me-2 mb-1">
-                                                                        XXL
-                                                                    </button>
-                                                                </li>
-                                                            </div>
-                                                        </div>
-                                                        <div className="d-flex flex-column mt-3">
-                                                            <li className="p-1">
-                                                                <b>COlor</b>: Red
-                                                            </li>
-                                                            <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
-                                                                <li>
-                                                                    <button
-                                                                        className="btn btn-sm me-2 mb-1 p-3"
-                                                                        style={{
-                                                                            backgroundColor: "red",
-                                                                        }}
-                                                                    />
-                                                                </li>
-                                                                <li>
-                                                                    <button
-                                                                        className="btn btn-sm me-2 mb-1 p-3"
-                                                                        style={{
-                                                                            backgroundColor:
-                                                                                "green",
-                                                                        }}
-                                                                    />
-                                                                </li>
-                                                                <li>
-                                                                    <button
-                                                                        className="btn btn-sm me-2 mb-1 p-3"
-                                                                        style={{
-                                                                            backgroundColor:
-                                                                                "yellow",
-                                                                        }}
+                                                                <li key={index}>
+                                                                    <input
+                                                                        className="form-control"
+                                                                        type="number"
+                                                                        min="1"
+                                                                        onChange={(e) =>
+                                                                            handleQuantityChange(
+                                                                                e,
+                                                                                p.id
+                                                                            )
+                                                                        }
                                                                     />
                                                                 </li>
                                                             </div>
                                                         </div>
+                                                        {/*  Product Quantity END */}
+
+                                                        {/* Product Sizes START */}
+                                                        {p.size?.length > 0 && (
+                                                            <div className="d-flex flex-column">
+                                                                <li className="p-1">
+                                                                    <b className="pe-1">Size:</b>
+                                                                    {selectedSizes[p.id] ||
+                                                                        "No Size"}
+                                                                </li>
+                                                                <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
+                                                                    {p.size?.map((size, index) => (
+                                                                        <li key={index}>
+                                                                            <button
+                                                                                onClick={(e) =>
+                                                                                    handleSizeButtonClick(
+                                                                                        e,
+                                                                                        p.id,
+                                                                                        size.name
+                                                                                    )
+                                                                                }
+                                                                                className="btn btn-secondary btn-sm me-2 mb-1"
+                                                                            >
+                                                                                {size.name}
+                                                                            </button>
+                                                                        </li>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {/* Product Sizes END */}
+
+                                                        {/* Product Colors START */}
+                                                        {p.color?.length > 0 && (
+                                                            <div className="mt-3">
+                                                                <li className="p-1">
+                                                                    <b className="pe-1">Color:</b>
+                                                                    {selectedColors[p.id] ||
+                                                                        "No Color"}
+                                                                </li>
+                                                                <ul className="list-unstyled d-flex flex-wrap">
+                                                                    {p.color?.map(
+                                                                        (color, index) => (
+                                                                            <li
+                                                                                key={index}
+                                                                                className="p-1"
+                                                                            >
+                                                                                <button
+                                                                                    className="btn btn-sm me-2 mb-1 p-3"
+                                                                                    style={{
+                                                                                        backgroundColor:
+                                                                                            color.color_code,
+                                                                                    }}
+                                                                                    onClick={(e) =>
+                                                                                        handleColorButtonClick(
+                                                                                            e,
+                                                                                            p.id,
+                                                                                            color.name
+                                                                                        )
+                                                                                    }
+                                                                                />
+                                                                            </li>
+                                                                        )
+                                                                    )}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+                                                        {/* Product Colors END */}
+
+                                                        {/* Add to Cart / Wishlist Btn Start */}
                                                         <div className="d-flex mt-3 p-1">
                                                             <button
                                                                 type="button"
@@ -158,6 +226,7 @@ function Product() {
                                                                 <i className="fas fa-heart" />
                                                             </button>
                                                         </div>
+                                                        {/* Add to Cart / Wishlist Btn END */}
                                                     </ul>
                                                     <button
                                                         type="button"
