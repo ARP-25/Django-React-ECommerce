@@ -8,12 +8,15 @@ import CartID from "../plugin/CartID";
 function Product() {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+
+    // Not sure if we need these START
     const [colorValue, setColorValue] = useState("No Color");
     const [sizeValue, setSizeValue] = useState("No Size");
-
     const [quantityValue, setQuantityValue] = useState(1);
-
     const [selectedProduct, setSelectedProduct] = useState({});
+    // Not sure if we need these END
+
+    const [selectedQuantity, setSelectedQuantity] = useState({});
     const [selectedColors, setSelectedColors] = useState({});
     const [selectedSizes, setSelectedSizes] = useState({});
 
@@ -40,8 +43,6 @@ function Product() {
     }, []);
 
     const handleColorButtonClick = (event, product_id, color_name) => {
-        setColorValue(color_name);
-        setSelectedProduct(product_id);
         setSelectedColors((prevSelectedColors) => ({
             ...prevSelectedColors,
             [product_id]: color_name,
@@ -49,8 +50,6 @@ function Product() {
     };
 
     const handleSizeButtonClick = (event, product_id, size_name) => {
-        setSizeValue(size_name);
-        setSelectedProduct(product_id);
         setSelectedSizes((prevSelectedSize) => ({
             ...prevSelectedSize,
             [product_id]: size_name,
@@ -58,8 +57,11 @@ function Product() {
     };
 
     const handleQuantityChange = (event, product_id) => {
-        setQuantityValue(event.target.value);
-        setSelectedProduct(product_id);
+        const newQuantity = event.target.value;
+        setSelectedQuantity((prevSelectedQuantity) => ({
+            ...prevSelectedQuantity,
+            [product_id]: newQuantity,
+        }));
     };
 
     const currentAddress = GetCurrentAddress();
@@ -69,14 +71,14 @@ function Product() {
     const handleAddToCart = async (product_id, price, shipping_amount) => {
         const formData = new FormData();
         formData.append("product_id", product_id);
-        formData.append("user_id", userData?.user_id);
-        formData.append("qty", quantityValue);
-        formData.append("price", price);
         formData.append("shipping_amount", shipping_amount);
+        formData.append("price", price);
+        formData.append("user_id", userData?.user_id);
         formData.append("country", currentAddress.country);
-        formData.append("size", sizeValue);
-        formData.append("color", colorValue);
         formData.append("cart_id", cart_id);
+        formData.append("qty", selectedQuantity[product_id] || 1);
+        formData.append("size", selectedSizes[product_id] || "No Size");
+        formData.append("color", selectedColors[product_id] || "No Color");
 
         const response = await apiInstance.post(`cart-view/`, formData);
         console.log(response.data);
@@ -156,6 +158,11 @@ function Product() {
                                                                         className="form-control"
                                                                         type="number"
                                                                         min="1"
+                                                                        value={
+                                                                            selectedQuantity[
+                                                                                p.id
+                                                                            ] || 1
+                                                                        } // This ensures the input displays the current quantity from the state
                                                                         onChange={(e) =>
                                                                             handleQuantityChange(
                                                                                 e,

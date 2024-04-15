@@ -120,7 +120,7 @@ class CartAPIView(generics.ListCreateAPIView):
 
         except (ValueError, Product.DoesNotExist, User.DoesNotExist):
             
-            return JsonResponse({'message': 'Product or User not found or invalid ID'}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({'message': 'Product/User not found or Product not published yet'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
