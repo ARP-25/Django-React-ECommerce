@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from rest_framework import generics
@@ -60,13 +61,15 @@ class CartAPIView(generics.ListCreateAPIView):
         color = payload['color']
         cart_id = payload['cart_id']
 
-        product = Product.objects.get(id=product_id)
-        user = User.objects.get(id=user_id)
+        product = Product.objects.filter(status="published", id=product_id).first()
 
-        if user_id != "undefined":
-            user = User.objects.get(id=user_id)
-        else:
-            user = None
+        user = None  
+        if user_id and user_id != 'undefined':
+            try:
+                user = User.objects.get(id=int(user_id))
+            except (ValueError, User.DoesNotExist):
+                return JsonResponse({'message': 'User not found or invalid user ID'}, status=status.HTTP_404_NOT_FOUND)
+
 
         tax = Tax.objects.filter(country=country).first()
         if tax:
@@ -74,7 +77,7 @@ class CartAPIView(generics.ListCreateAPIView):
         else:
             tax_rate = 0
 
-        cart = Cart.objects.filter(id=cart_id, product=product).first()
+        cart = Cart.objects.filter(cart_id=cart_id, product=product).first()
         if cart:
             cart.product = product
             cart.user = user
@@ -86,9 +89,10 @@ class CartAPIView(generics.ListCreateAPIView):
             cart.color = color
             cart.size = size
             cart.cart_id = cart_id
+            cart.country = country
 
             service_fee_percentage = 10 / 100
-            cart.service_fee = service_fee_percentage * cart.sub_total
+            cart.service_fee = Decimal(service_fee_percentage) * cart.sub_total
 
             cart.total = cart.sub_total + cart.shipping_amount + cart.tax_fee + cart.service_fee
             cart.save()
@@ -106,11 +110,12 @@ class CartAPIView(generics.ListCreateAPIView):
                 tax_fee=int(qty) * Decimal(tax_rate),
                 color=color,
                 size=size,
-                cart_id=cart_id
+                cart_id=cart_id,
+                country = country
             )
 
             service_fee_percentage = 10 / 100
-            cart.service_fee = service_fee_percentage * cart.sub_total
+            cart.service_fee = Decimal(service_fee_percentage) * cart.sub_total
 
             cart.total = cart.sub_total + cart.shipping_amount + cart.tax_fee + cart.service_fee
             cart.save()

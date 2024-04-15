@@ -53,14 +53,32 @@ function ProductDetail() {
         setQuantityValue(event.target.value);
     };
 
-    const handleAddToCart = () => {
-        console.log("Card ID: ", cardID);
-        console.log("User Data: ", userData?.user_id);
-        console.log("Product ID: ", product.id);
-        console.log("Product Title: ", product.title);
-        console.log("Product Price: ", product.price);
-        console.log("Product Shipping: ", product.shipping_amount);
-        console.log(sizeValue, colorValue, quantityValue);
+    const handleAddToCart = async () => {
+        // console.log("Card ID: ", cardID);
+        // console.log("User Data: ", userData?.user_id);
+        // console.log("Product ID: ", product.id);
+        // console.log("Product Title: ", product.title);
+        // console.log("Product Price: ", product.price);
+        // console.log("Product Shipping: ", product.shipping_amount);
+        // console.log(sizeValue, colorValue, quantityValue);
+        console.log(currentAddress.country);
+        try {
+            const formData = new FormData();
+            formData.append("product_id", product.id);
+            formData.append("user_id", userData?.user_id);
+            formData.append("qty", quantityValue);
+            formData.append("price", product.price);
+            formData.append("shipping_amount", product.shipping_amount);
+            formData.append("country", currentAddress.country);
+            formData.append("size", sizeValue);
+            formData.append("color", colorValue);
+            formData.append("cart_id", cardID);
+
+            const response = await apiInstance.post(`cart-view/`, formData);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Failed to add product to cart:", error);
+        }
     };
 
     return (
