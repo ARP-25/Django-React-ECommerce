@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import apiInstance from "../../utils/axios";
 import GetCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
-import CardID from "../plugin/CardID";
+import CartID from "../plugin/CartID";
 
 function ProductDetail() {
     const [product, setProduct] = useState({}); // Product details
@@ -23,7 +23,7 @@ function ProductDetail() {
     const currentAddress = GetCurrentAddress();
 
     const userData = UserData();
-    const cardID = CardID();
+    const cartID = CartID();
 
     useEffect(() => {
         apiInstance.get(`/products/${param.slug}`).then((res) => {
@@ -54,7 +54,7 @@ function ProductDetail() {
     };
 
     const handleAddToCart = async () => {
-        // console.log("Card ID: ", cardID);
+        // console.log("Card ID: ", cartID);
         // console.log("User Data: ", userData?.user_id);
         // console.log("Product ID: ", product.id);
         // console.log("Product Title: ", product.title);
@@ -72,7 +72,7 @@ function ProductDetail() {
             formData.append("country", currentAddress.country);
             formData.append("size", sizeValue);
             formData.append("color", colorValue);
-            formData.append("cart_id", cardID);
+            formData.append("cart_id", cartID);
 
             const response = await apiInstance.post(`cart-view/`, formData);
             console.log(response.data);

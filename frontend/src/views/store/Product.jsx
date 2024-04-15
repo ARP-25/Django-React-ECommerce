@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import apiInstance from "../../utils/axios";
 import { Link } from "react-router-dom";
+import GetCurrentAddress from "../plugin/UserCountry";
+import UserData from "../plugin/UserData";
+import CartID from "../plugin/CartID";
 
 function Product() {
     const [products, setProducts] = useState([]);
@@ -57,6 +60,26 @@ function Product() {
     const handleQuantityChange = (event, product_id) => {
         setQuantityValue(event.target.value);
         setSelectedProduct(product_id);
+    };
+
+    const currentAddress = GetCurrentAddress();
+    const userData = UserData();
+    const cart_id = CartID();
+
+    const handleAddToCart = async (product_id, price, shipping_amount) => {
+        const formData = new FormData();
+        formData.append("product_id", product_id);
+        formData.append("user_id", userData?.user_id);
+        formData.append("qty", quantityValue);
+        formData.append("price", price);
+        formData.append("shipping_amount", shipping_amount);
+        formData.append("country", currentAddress.country);
+        formData.append("size", sizeValue);
+        formData.append("color", colorValue);
+        formData.append("cart_id", cart_id);
+
+        const response = await apiInstance.post(`cart-view/`, formData);
+        console.log(response.data);
     };
 
     return (
@@ -125,6 +148,7 @@ function Product() {
                                                         <div className="d-flex flex-column">
                                                             <li className="p-1">
                                                                 <b className="pe-1">Quantity:</b>
+                                                                {}
                                                             </li>
                                                             <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
                                                                 <li key={index}>
@@ -216,6 +240,13 @@ function Product() {
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-primary me-1 mb-1"
+                                                                onClick={() =>
+                                                                    handleAddToCart(
+                                                                        p.id,
+                                                                        p.price,
+                                                                        p.shipping_amount
+                                                                    )
+                                                                }
                                                             >
                                                                 <i className="fas fa-shopping-cart" />
                                                             </button>
