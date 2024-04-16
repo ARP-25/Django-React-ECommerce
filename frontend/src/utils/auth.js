@@ -4,6 +4,15 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import apiInstance from "./axios";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+});
 
 export const login = async (email, password) => {
     try {
@@ -12,6 +21,10 @@ export const login = async (email, password) => {
         if (status === 200) {
             setAuthUser(data.access, data.refresh);
             // Alert - Sign in Succesfully
+            Toast.fire({
+                icon: "success",
+                title: "Signed in successfully",
+            });
         }
 
         return { data, error: null };
@@ -31,6 +44,10 @@ export const register = async (full_name, email, phone, password, password2) => 
         });
         //await login(email, password)
         // Alert - Signed up successfully
+        Toast.fire({
+            icon: "success",
+            title: "Signed up successfully",
+        });
         return { data, error: null };
     } catch (error) {
         return { data: null, error: error.response.data?.detail || error.message };
