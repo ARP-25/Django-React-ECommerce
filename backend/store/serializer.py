@@ -116,11 +116,11 @@ class ProductWriteSerializer(serializers.ModelSerializer):
     
 
 class CartSerializer(serializers.ModelSerializer):
+    # Serialize the related Product model
+    product = ProductReadSerializer()  
     class Meta:
         model = Cart
         fields = '__all__'
-
-    #maybe need nested serializers here
 
 
 class CartOrderSerializer(serializers.ModelSerializer):

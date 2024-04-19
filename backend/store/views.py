@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -17,7 +18,9 @@ from .serializer import ProductWriteSerializer
 from .serializer import CategorySerializer
 from .serializer import CartSerializer
 
+import logging
 
+logger = logging.getLogger(__name__)
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
@@ -123,7 +126,23 @@ class CartAPIView(generics.ListCreateAPIView):
             return JsonResponse({'message': 'Product/User not found or Product not published yet'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class CartListView(generics.ListAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        cart_id = self.kwargs.get('cart_id')  # Ensuring you are retrieving from the correct place
+        user_id = self.kwargs.get('user_id')
+
+        if user_id is not None:
+            user = get_object_or_404(User, id=user_id)
+            queryset = Cart.objects.filter(user=user, cart_id=cart_id)
+            
+        else:
+            queryset = Cart.objects.filter(cart_id=cart_id)
+            
+        return queryset
 
 
 
