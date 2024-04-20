@@ -9,10 +9,12 @@ import Swal from "sweetalert2";
 function Cart() {
     const [cart, setCart] = useState([]);
     const [cartTotal, setCartTotal] = useState(0);
+    const [productQuantities, setProductQuantities] = useState("");
 
     const userData = UserData();
     const cart_id = CartID();
 
+    // Fetch Cart Data Function
     const fetchCartData = (cart_id, user_id) => {
         const url = user_id ? `/cart-list/${cart_id}/${user_id}` : `/cart-list/${cart_id}`;
         apiInstance.get(url).then((res) => {
@@ -20,6 +22,7 @@ function Cart() {
         });
     };
 
+    // Fetch CartTotal Data Function
     const fetchCartTotal = (cart_id, user_id) => {
         const url = user_id ? `/cart-detail/${cart_id}/${user_id}` : `/cart-detail/${cart_id}`;
         apiInstance.get(url).then((res) => {
@@ -27,9 +30,9 @@ function Cart() {
         });
     };
 
+    // Fetching Cart and CartTotal Data
     if (cart_id !== null || cart_id !== undefined) {
         if (userData !== undefined) {
-            // ssne dcart data with user id
             useEffect(() => {
                 fetchCartData(cart_id, userData.user_id);
                 fetchCartTotal(cart_id, userData.user_id);
@@ -41,8 +44,22 @@ function Cart() {
             }, []);
         }
     }
-    console.log(cartTotal);
-    console.log(cart);
+
+    const handleQuantityChange = (event, product_id) => {
+        const quantity = event.target.value;
+        setProductQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [product_id]: quantity,
+        }));
+    };
+
+    useEffect(() => {
+        const initialQuantities = {};
+        cart.forEach((c) => {
+            initialQuantities[c.product?.id] = c.qty;
+        });
+        setProductQuantities(initialQuantities);
+    }, [cart]);
 
     return (
         <div>
@@ -164,8 +181,18 @@ function Cart() {
                                                                 <input
                                                                     type="number"
                                                                     className="form-control"
-                                                                    value={c.qty}
+                                                                    value={
+                                                                        productQuantities[
+                                                                            c.product?.id
+                                                                        ] || c.qty
+                                                                    }
                                                                     min={1}
+                                                                    onChange={(e) =>
+                                                                        handleQuantityChange(
+                                                                            e,
+                                                                            c.product?.id
+                                                                        )
+                                                                    }
                                                                 />
                                                             </div>
                                                             <button className="ms-2 btn btn-primary">
@@ -341,7 +368,7 @@ function Cart() {
                                         )}
                                     </div>
 
-                                    {/* Section: Summary */}
+                                    {/* Section: Summary of Cart */}
                                     {cart.length > 0 && (
                                         <div className="col-lg-4 mb-4 mb-md-0">
                                             <section className="shadow-4 p-4 rounded-5 mb-4">
