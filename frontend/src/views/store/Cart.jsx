@@ -4,15 +4,25 @@ import { useState, useEffect } from "react";
 import apiInstance from "../../utils/axios";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartID";
+import GetCurrentAddress from "../plugin/UserCountry";
 import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+});
 
 function Cart() {
     const [cart, setCart] = useState([]);
     const [cartTotal, setCartTotal] = useState(0);
-    const [productQuantities, setProductQuantities] = useState("");
+    const [productQuantities, setProductQuantities] = useState([]);
 
     const userData = UserData();
     const cart_id = CartID();
+    const currentAddress = GetCurrentAddress();
 
     // Fetch Cart Data Function
     const fetchCartData = (cart_id, user_id) => {
@@ -60,6 +70,36 @@ function Cart() {
         });
         setProductQuantities(initialQuantities);
     }, [cart]);
+
+    const updateCart = async (product_id, price, shipping_amount, color, size) => {
+        const qtyValue = productQuantities[product_id];
+
+        const formData = new FormData();
+        formData.append("product_id", product_id);
+        formData.append("user_id", userData?.user_id);
+        formData.append("qty", qtyValue);
+        formData.append("price", price);
+        formData.append("shipping_amount", shipping_amount);
+        formData.append("country", currentAddress.country);
+        formData.append("cart_id", cart_id);
+        formData.append("size", size);
+        formData.append("color", color);
+
+        const response = await apiInstance.post(`cart-view/`, formData);
+
+        if (userData !== undefined) {
+            fetchCartData(cart_id, userData.user_id);
+            fetchCartTotal(cart_id, userData.user_id);
+        } else {
+            fetchCartData(cart_id, null);
+            fetchCartTotal(cart_id, null);
+        }
+
+        Toast.fire({
+            icon: "success",
+            title: response.data.message,
+        });
+    };
 
     return (
         <div>
@@ -196,7 +236,19 @@ function Cart() {
                                                                 />
                                                             </div>
                                                             <button className="ms-2 btn btn-primary">
-                                                                <i className="fas fa-rotate-right"></i>
+                                                                <i
+                                                                    onClick={() =>
+                                                                        updateCart(
+                                                                            c.product?.id,
+                                                                            c.product?.price,
+                                                                            c.product
+                                                                                ?.shipping_amount,
+                                                                            c.color,
+                                                                            c.size
+                                                                        )
+                                                                    }
+                                                                    className="fas fa-rotate-right"
+                                                                ></i>
                                                             </button>
                                                         </div>
 
@@ -208,7 +260,7 @@ function Cart() {
                                                                 </span>
                                                             </small>
                                                             <span className="d-block text-end mt-1">
-                                                                $100.00
+                                                                ${c.sub_total}
                                                             </span>
                                                         </h5>
                                                     </div>
