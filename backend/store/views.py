@@ -205,6 +205,20 @@ class CartDetailAPIView(generics.RetrieveAPIView):
         return cart_items.total
 
 
+class CartItemDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = CartSerializer
+    lookup_field = 'cart_id'
 
+    def get_object(self):
+        cart_id = self.kwargs.get('cart_id')
+        item_id = self.kwargs.get('item_id')
+        user_id = self.kwargs.get('user_id')
 
+        if user_id:
+            user = get_object_or_404(User, id=user_id)
+            cart = get_object_or_404(Cart, id=item_id, cart_id=cart_id, user=user)
+        else:
+            cart = get_object_or_404(Cart, id=cart_id, cart_id=cart_id)
+
+        return cart
 
