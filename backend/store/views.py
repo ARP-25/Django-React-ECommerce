@@ -126,7 +126,7 @@ class CartAPIView(generics.ListCreateAPIView):
             return JsonResponse({'message': 'Product/User not found or Product not published yet'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class CartListView(generics.ListAPIView):
+class CartListAPIView(generics.ListAPIView):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
     permission_classes = [AllowAny]
@@ -145,7 +145,7 @@ class CartListView(generics.ListAPIView):
         return queryset
 
 
-class CartDetailView(generics.RetrieveAPIView):
+class CartDetailAPIView(generics.RetrieveAPIView):
     serializer_class = CartSerializer
     permission_classes = [AllowAny]
     lookup_field = 'cart_id'

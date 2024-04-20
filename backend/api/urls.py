@@ -18,8 +18,8 @@ urlpatterns = [
     path('products/', store_views.ProductListAPIView.as_view(), name='product-list'),
     path('products/<str:slug>/', store_views.ProductDetailAPIView.as_view(), name='product-detail'),
     path('cart-view/', store_views.CartAPIView.as_view(), name='cart-view'),
-    path('cart-list/<str:cart_id>/<int:user_id>/', store_views.CartListView.as_view(), name='cart-list'),
-    path('cart-list/<str:cart_id>/', store_views.CartListView.as_view(), name='cart-list'),
-    path('cart-detail/<str:cart_id>/<int:user_id>/', store_views.CartDetailView.as_view(), name='cart-detail'),
-    path('cart-detail/<str:cart_id>/', store_views.CartDetailView.as_view(), name='cart-detail'),
+    path('cart-list/<str:cart_id>/<int:user_id>/', store_views.CartListAPIView.as_view(), name='cart-list'),
+    path('cart-list/<str:cart_id>/', store_views.CartListAPIView.as_view(), name='cart-list'),
+    path('cart-detail/<str:cart_id>/<int:user_id>/', store_views.CartDetailAPIView.as_view(), name='cart-detail'),
+    path('cart-detail/<str:cart_id>/', store_views.CartDetailAPIView.as_view(), name='cart-detail'),
 ]

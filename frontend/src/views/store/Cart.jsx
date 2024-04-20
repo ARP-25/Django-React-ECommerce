@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 
 function Cart() {
     const [cart, setCart] = useState([]);
+    const [cartTotal, setCartTotal] = useState(0);
 
     const userData = UserData();
     const cart_id = CartID();
@@ -15,8 +16,14 @@ function Cart() {
     const fetchCartData = (cart_id, user_id) => {
         const url = user_id ? `/cart-list/${cart_id}/${user_id}` : `/cart-list/${cart_id}`;
         apiInstance.get(url).then((res) => {
-            console.log(res.data);
             setCart(res.data);
+        });
+    };
+
+    const fetchCartTotal = (cart_id, user_id) => {
+        const url = user_id ? `/cart-detail/${cart_id}/${user_id}` : `/cart-detail/${cart_id}`;
+        apiInstance.get(url).then((res) => {
+            setCartTotal(res.data);
         });
     };
 
@@ -25,14 +32,16 @@ function Cart() {
             // ssne dcart data with user id
             useEffect(() => {
                 fetchCartData(cart_id, userData.user_id);
+                fetchCartTotal(cart_id, userData.user_id);
             }, []);
         } else {
             useEffect(() => {
                 fetchCartData(cart_id, null);
+                fetchCartTotal(cart_id, null);
             }, []);
         }
     }
-
+    console.log(cartTotal);
     console.log(cart);
 
     return (
@@ -339,24 +348,26 @@ function Cart() {
                                                 <h5 className="mb-3">Cart Summary</h5>
                                                 <div className="d-flex justify-content-between mb-3">
                                                     <span>Subtotal </span>
-                                                    <span>$10.00</span>
+                                                    <span>${cartTotal.sub_total?.toFixed(2)}</span>
                                                 </div>
                                                 <div className="d-flex justify-content-between">
                                                     <span>Shipping </span>
-                                                    <span>$10.00</span>
+                                                    <span>${cartTotal.shipping?.toFixed(2)}</span>
                                                 </div>
                                                 <div className="d-flex justify-content-between">
                                                     <span>Tax </span>
-                                                    <span>$10.00</span>
+                                                    <span>${cartTotal.tax?.toFixed(2)}</span>
                                                 </div>
                                                 <div className="d-flex justify-content-between">
                                                     <span>Servive Fee </span>
-                                                    <span>$10.00</span>
+                                                    <span>
+                                                        ${cartTotal.service_fee?.toFixed(2)}
+                                                    </span>
                                                 </div>
                                                 <hr className="my-4" />
                                                 <div className="d-flex justify-content-between fw-bold mb-5">
                                                     <span>Total </span>
-                                                    <span>$10.00</span>
+                                                    <span>${cartTotal.total?.toFixed(2)}</span>
                                                 </div>
                                                 <button className="btn btn-primary btn-rounded w-100">
                                                     Got to checkout
