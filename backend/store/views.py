@@ -145,6 +145,66 @@ class CartListView(generics.ListAPIView):
         return queryset
 
 
+class CartDetailView(generics.RetrieveAPIView):
+    serializer_class = CartSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'cart_id'
+
+    def get_queryset(self):
+        cart_id = self.kwargs.get('cart_id')  
+        user_id = self.kwargs.get('user_id')
+
+        if user_id is not None:
+            user = get_object_or_404(User, id=user_id)
+            queryset = Cart.objects.filter(user=user, cart_id=cart_id)
+            
+        else:
+            queryset = Cart.objects.filter(cart_id=cart_id)
+            
+        return queryset
+    
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        total_shipping = 0
+        total_tax = 0
+        total_service_fee = 0
+        total_sub_total = 0
+        total_total = 0
+
+        for cart_item in queryset:
+            total_shipping += self.calculate_shipping(cart_item)
+            total_tax += self.calculate_tax(cart_item)
+            total_service_fee += self.calculate_service_fee(cart_item)
+            total_sub_total += self.calculate_sub_total(cart_item)
+            total_total += self.calculate_total(cart_item)
+
+        data = {
+            'shipping':total_shipping,
+            'tax': total_tax,
+            'service_fee': total_service_fee,
+            'sub_total': total_sub_total,
+            'total': total_total,
+            }
+        
+        return Response(data, status=status.HTTP_200_OK)
+    
+    def calculate_shipping(self, cart_items):
+        return cart_items.shipping_amount
+    
+    def calculate_tax(self, cart_items):
+        return cart_items.tax_fee
+    
+    def calculate_service_fee(self, cart_items):
+        return cart_items.service_fee
+    
+    def calculate_sub_total(self, cart_items):
+        return cart_items.sub_total
+    
+    def calculate_total(self, cart_items):
+        return cart_items.total
+
+
 
 
 
