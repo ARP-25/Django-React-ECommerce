@@ -42,7 +42,7 @@ function Cart() {
 
     // Fetching Cart and CartTotal Data
     if (cart_id !== null || cart_id !== undefined) {
-        if (userData !== undefined) {
+        if (userData !== null) {
             useEffect(() => {
                 fetchCartData(cart_id, userData.user_id);
                 fetchCartTotal(cart_id, userData.user_id);
@@ -101,6 +101,32 @@ function Cart() {
         });
     };
 
+    const handleDeleteCartItem = async (item_id) => {
+        const url = userData?.user_id
+            ? `/cart-delete/${cart_id}/${item_id}/${userData.user_id}/`
+            : `/cart-delete/${cart_id}/${item_id}/`;
+
+        try {
+            await apiInstance.delete(url).then((res) => {
+                if (userData !== undefined) {
+                    fetchCartData(cart_id, userData.user_id);
+                    fetchCartTotal(cart_id, userData.user_id);
+                } else {
+                    fetchCartData(cart_id, null);
+                    fetchCartTotal(cart_id, null);
+                }
+            });
+
+            Toast.fire({
+                icon: "success",
+                title: "Item has been removed from the cart",
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    console.log(cart);
     return (
         <div>
             <main className="mt-5">
@@ -198,7 +224,12 @@ function Cart() {
                                                         </p>
 
                                                         <p className="mt-3">
-                                                            <button className="btn btn-danger ">
+                                                            <button
+                                                                className="btn btn-danger"
+                                                                onClick={() =>
+                                                                    handleDeleteCartItem(c.id)
+                                                                }
+                                                            >
                                                                 <small>
                                                                     <i className="fas fa-trash me-2" />
                                                                     Remove

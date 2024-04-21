@@ -218,7 +218,7 @@ class CartItemDeleteAPIView(generics.DestroyAPIView):
             user = get_object_or_404(User, id=user_id)
             cart = get_object_or_404(Cart, id=item_id, cart_id=cart_id, user=user)
         else:
-            cart = get_object_or_404(Cart, id=cart_id, cart_id=cart_id)
+            cart = get_object_or_404(Cart, id=item_id, cart_id=cart_id)
 
         return cart
 
