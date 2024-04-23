@@ -126,16 +126,16 @@ class CartSerializer(serializers.ModelSerializer):
 class CartOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartOrder
-        fields = '__all__'
+        fields = '__all__'  # Adjust as necessary
 
-    # def __init__(self, *args, **kwargs):
-    #     super(CartOrderSerializer, self).__init__(*args, **kwargs)
-    #     request = kwargs.get('context', {}).get('request')
-    #     if request.method == 'POST':
-
-    #         self.Meta.depth = 0
-    #     else:
-    #         self.Meta.depth = 3
+    def to_representation(self, instance):
+        # Adjust depth based on request type context
+        request_type = self.context.get('request_type', 'GET')
+        if request_type == 'POST':
+            self.Meta.depth = 0  # Less detail for POST responses
+        else:
+            self.Meta.depth = 3  # More detail for GET responses
+        return super().to_representation(instance)
 
 
 class CartOrderItemSerializer(serializers.ModelSerializer):

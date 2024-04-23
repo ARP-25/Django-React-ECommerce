@@ -313,3 +313,17 @@ class CreateOrderAPIView(generics.CreateAPIView):
         return Response({"message": "Order Created Successfully", 'order_oid': order.oid}, status=status.HTTP_201_CREATED)
 
 
+class CheckoutAPIView(generics.RetrieveAPIView):
+    serializer_class = CartOrderSerializer
+    lookup_field = 'order_id'
+
+    def get_object(self):
+        order_id = self.kwargs.get('order_id')
+        order = get_object_or_404(CartOrder, oid=order_id)
+        return order
+    
+    def get_serializer_context(self):
+        """Extend the existing context with the request type."""
+        context = super(CheckoutAPIView, self).get_serializer_context()
+        context['request_type'] = self.request.method
+        return context
