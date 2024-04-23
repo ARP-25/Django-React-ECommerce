@@ -341,33 +341,34 @@ class CouponAPIView(generics.CreateAPIView):
         coupon_code = payload['coupon_code']
 
         order = get_object_or_404(CartOrder, oid=order_oid)
-        coupon = get_object_or_404(Coupon, code=coupon_code)
+        coupon = Coupon.objects.filter(code=coupon_code).first()
 
-        if coupon:
-            order_items = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
-            if order_items:
-                for i in order_items:
-                    if not coupon in i.coupon.all():
-                        discount = i.total * coupon.discount / 100
+        if not coupon:
+            return Response({'message': 'Coupon not found!', 'icon': 'error'}, status=status.HTTP_404_NOT_FOUND)
 
-                        i.total -= discount
-                        i.sub_total -= discount
-                        i.coupon.add(coupon)
-                        i.saved += discount
-                        
-                        order.total -= discount
-                        order.sub_total -= discount 
-                        order.saved += discount
+        order_items = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
+        if not order_items.exists():
+            return Response({'message': 'No items found for this coupon!', 'icon': 'error'}, status=status.HTTP_404_NOT_FOUND)
 
-                        i.save()
-                        order.save()
+        applied = False
+        for i in order_items:
+            if coupon not in i.coupon.all():
+                discount = i.total * coupon.discount / 100
+                i.total -= discount
+                i.sub_total -= discount
+                i.saved += discount
+                i.coupon.add(coupon)
 
-                        return Response({'message': 'Coupon applied successfully!'}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'message': 'Coupon already applied!'}, status=status.HTTP_200_OK)
-            else:
-                return Response({'message': 'No items found for this coupon!'}, status=status.HTTP_200_OK)
+                order.total -= discount
+                order.sub_total -= discount
+                order.saved += discount
+
+                i.save()
+                applied = True
+
+        if applied:
+            order.save()
+            return Response({'message': 'Coupon applied successfully!', 'icon': 'success'}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'Coupon not found!'}, status=status.HTTP_200_OK)
-            
-                    
+            return Response({'message': 'Coupon already applied!', 'icon': 'warning'}, status=status.HTTP_200_OK)
+                
