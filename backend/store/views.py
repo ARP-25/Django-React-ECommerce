@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -17,7 +18,8 @@ from .serializer import ProductReadSerializer
 from .serializer import ProductWriteSerializer
 from .serializer import CategorySerializer
 from .serializer import CartSerializer
-from .serializer import OrderSerializer
+from .serializer import CartOrderSerializer
+from .serializer import CartOrderItemSerializer
 
 import logging
 
@@ -224,13 +226,14 @@ class CartItemDeleteAPIView(generics.DestroyAPIView):
         return cart
 
 
-class CreateOrderAPIView(generics.createAPIView):
-    serializer_class = OrderSerializer
-    queryset = Cart.objects.all()
-    permission_classes = [AllowAny]
+class CreateOrderAPIView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    queryset = CartOrder.objects.all()
+    permission_classes = (AllowAny,)
 
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         payload = request.data
+
         full_name = payload['full_name']
         email = payload['email']
         mobile = payload['mobile']
@@ -241,66 +244,72 @@ class CreateOrderAPIView(generics.createAPIView):
         cart_id = payload['cart_id']
         user_id = payload['user_id']
 
-        if user_id != 0:
-            user = get_object_or_404(User, id=user_id)
+        if user_id != "0":
+            try:
+                user_id_int = int(user_id)  
+                user = get_object_or_404(User, id=user_id_int)
+            except ValueError:
+                return Response({"error": "Invalid User ID"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             user = None
 
         cart_items = Cart.objects.filter(cart_id=cart_id)
 
-        total_shipping = Decimal(0.00)
-        total_tax = Decimal(0.00)
-        total_service_fee = Decimal(0.00)
-        total_sub_total = Decimal(0.00)
-        total_initial_total = Decimal(0.00)
-        total_total = Decimal(0.00)
-
-        order = CartOrder.objects.create(
-            full_name=full_name,
-            email=email,
-            mobile=mobile,
-            address=address,
-            city=city,
-            state=state,
-            country=country,
-            user=user,
-            cart_id=cart_id
-        )
-
-        for c in cart_items:
-            CartOrderItem.objects.create(
-                order = order,
-                product = c.product,
-                vendor = c.product.vendor,
-                qty = c.qty,
-                color = c.color,
-                size = c.size,
-                price = c.price,
-                sub_total = c.sub_total,
-                shipping_amount = c.shipping_amount,
-                tax_fee = c.tax_fee,
-                service_fee = c.service_fee,
-                total = c.total,
-                initial_total = c.total,
+        with transaction.atomic():
+            order = CartOrder.objects.create(
+                buyer=user,
+                payment_status="processing",
+                full_name=full_name,
+                email=email,
+                mobile=mobile,
+                address=address,
+                city=city,
+                state=state,
+                country=country
             )
 
-            total_shipping += Decimal(c.shipping_amount)
-            total_tax += Decimal(c.tax_fee)
-            total_service_fee += Decimal(c.service_fee)
-            total_sub_total += Decimal(c.sub_total)
-            total_initial_total += Decimal(c.total)
-            total_total += Decimal(c.total)
-            order.vendor.add(c.product.vendor)
+            total_shipping = Decimal(0.0)
+            total_tax = Decimal(0.0)
+            total_service_fee = Decimal(0.0)
+            total_sub_total = Decimal(0.0)
+            total_initial_total = Decimal(0.0)
+            total_total = Decimal(0.0)
 
-        order.shipping_amount = total_shipping
-        order.tax_fee = total_tax
-        order.service_fee = total_service_fee
-        order.sub_total = total_sub_total
-        order.initial_total = total_initial_total
-        order.total = total_total
-        order.save()
+            for c in cart_items:
+                CartOrderItem.objects.create(
+                    order=order,
+                    product=c.product,
+                    qty=c.qty,
+                    color=c.color,
+                    size=c.size,
+                    price=c.price,
+                    sub_total=c.sub_total,
+                    shipping_amount=c.shipping_amount,
+                    tax_fee=c.tax_fee,
+                    service_fee=c.service_fee,
+                    total=c.total,
+                    initial_total=c.total,
+                    vendor=c.product.vendor
+                )
 
-        return Response({'message': 'Order created successfully!', 'order_oid': order.oid}, status=status.HTTP_201_CREATED)
+                total_shipping += c.shipping_amount
+                total_tax += c.tax_fee
+                total_service_fee += c.service_fee
+                total_sub_total += c.sub_total
+                total_initial_total += c.total
+                total_total += c.total
 
+                order.vendor.add(c.product.vendor)
+
+            order.sub_total = total_sub_total
+            order.shipping_amount = total_shipping
+            order.tax_fee = total_tax
+            order.service_fee = total_service_fee
+            order.initial_total = total_initial_total
+            order.total = total_total
+            
+            order.save()
+
+        return Response({"message": "Order Created Successfully", 'order_oid': order.oid}, status=status.HTTP_201_CREATED)
 
 

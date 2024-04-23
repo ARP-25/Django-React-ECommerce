@@ -186,7 +186,7 @@ class CartOrder(models.Model):
     mobile = models.CharField(max_length=100, null=True, blank=True)
 
     #Shipping Address
-    adress = models.CharField(max_length=100, null=True, blank=True)
+    address = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     state = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
@@ -196,6 +196,18 @@ class CartOrder(models.Model):
     oid = ShortUUIDField(unique=True, length=10, prefix="O", alphabet="abcdefg123456789")
     date = models.DateTimeField(auto_now_add=True)
 
+    def update_totals(self, shipping_amount, tax_fee, service_fee, sub_total, initial_total, total):
+        """
+        Update the order totals.
+        """
+        self.shipping_amount = shipping_amount
+        self.tax_fee = tax_fee
+        self.service_fee = service_fee
+        self.sub_total = sub_total
+        self.initial_total = initial_total
+        self.total = total
+        self.save()
+        
     def __str__(self):
         return f"{self.oid} - {self.full_name}"
     
@@ -223,6 +235,8 @@ class CartOrderItem(models.Model):
 
     oid = ShortUUIDField(unique=True, length=10, prefix="O", alphabet="abcdefg123456789")
     date = models.DateTimeField(auto_now_add=True)
+
+
 
     def __str__(self):
         return f"{self.oid}"
