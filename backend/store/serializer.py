@@ -117,39 +117,34 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
 class CartSerializer(serializers.ModelSerializer):
     # Serialize the related Product model
+    
     product = ProductReadSerializer()  
     class Meta:
         model = Cart
         fields = '__all__'
 
-
-class CartOrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CartOrder
-        fields = '__all__'  # Adjust as necessary
-
-    def to_representation(self, instance):
-        # Adjust depth based on request type context
-        request_type = self.context.get('request_type', 'GET')
-        if request_type == 'POST':
-            self.Meta.depth = 0  # Less detail for POST responses
-        else:
-            self.Meta.depth = 3  # More detail for GET responses
-        return super().to_representation(instance)
-
-
 class CartOrderItemSerializer(serializers.ModelSerializer):
+    vendor = VendorSerializer(read_only=True)
+    product = ProductReadSerializer(read_only=True)
     class Meta:
         model = CartOrderItem
         fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
-        super(CartOrderItemSerializer, self).__init__(*args, **kwargs)
-        request = kwargs.get('context', {}).get('request')
-        if request.METHOD == 'POST':
-            self.Meta.depth = 0
-        else:
-            self.Meta.depth = 3
+
+class CartOrderSerializer(serializers.ModelSerializer):
+    items = CartOrderItemSerializer(many=True, read_only=True, source='cartorderitem_set')  # Adjust source according to your related name
+
+    class Meta:
+        model = CartOrder
+        fields = '__all__'  # Make sure to include 'items' or adjust as necessary
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Additional logic or adjustments can be added here if needed
+        return representation
+
+
+
 
 
 class ProductFaqSerializer(serializers.ModelSerializer):
