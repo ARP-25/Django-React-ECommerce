@@ -13,13 +13,14 @@ from userauths.models import User
 
 from decimal import Decimal
 
-from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax
+from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon
 from .serializer import ProductReadSerializer
 from .serializer import ProductWriteSerializer
 from .serializer import CategorySerializer
 from .serializer import CartSerializer
 from .serializer import CartOrderSerializer
 from .serializer import CartOrderItemSerializer
+from .serializer import CouponSerializer
 
 import logging
 
@@ -327,3 +328,46 @@ class CheckoutAPIView(generics.RetrieveAPIView):
         context = super(CheckoutAPIView, self).get_serializer_context()
         context['request_type'] = self.request.method
         return context
+    
+
+class CouponAPIView(generics.CreateAPIView):
+    serializer_class = CouponSerializer
+    queryset = Coupon.objects.all()
+    permission_classes = (AllowAny,)
+
+    def create(self, request):
+        payload = request.data
+        order_oid = payload['order_oid']
+        coupon_code = payload['coupon_code']
+
+        order = get_object_or_404(CartOrder, oid=order_oid)
+        coupon = get_object_or_404(Coupon, code=coupon_code)
+
+        if coupon:
+            order_items = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
+            if order_items:
+                for i in order_items:
+                    if not coupon in i.coupon.all():
+                        discount = i.total * coupon.discount / 100
+
+                        i.total -= discount
+                        i.sub_total -= discount
+                        i.coupon.add(coupon)
+                        i.saved += discount
+                        
+                        order.total -= discount
+                        order.sub_total -= discount 
+                        order.saved += discount
+
+                        i.save()
+                        order.save()
+
+                        return Response({'message': 'Coupon applied successfully!'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'message': 'Coupon already applied!'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'No items found for this coupon!'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Coupon not found!'}, status=status.HTTP_200_OK)
+            
+                    

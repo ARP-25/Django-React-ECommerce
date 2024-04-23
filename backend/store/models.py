@@ -9,6 +9,7 @@ from userauths.models import User, Profile
 
 
 
+
 class Category(models.Model):
     title = models.CharField(max_length=100, help_text='Category title', null=True, blank=True)
     image = models.FileField(upload_to='category/', null=True, blank=True, default="category/default.jpg")
@@ -233,6 +234,7 @@ class CartOrderItem(models.Model):
     color = models.CharField(max_length=100, null=True, blank=True)
 
     #Coupon
+    coupon = models.ManyToManyField("store.Coupon", blank=True)
     initial_total = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0.00)
     saved = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0.00)
 
