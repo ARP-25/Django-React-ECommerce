@@ -56,8 +56,8 @@ function Cart() {
     if (cart_id !== null || cart_id !== undefined) {
         if (userData !== null) {
             useEffect(() => {
-                fetchCartData(cart_id, userData.user_id);
-                fetchCartTotal(cart_id, userData.user_id);
+                fetchCartData(cart_id, userData?.user_id);
+                fetchCartTotal(cart_id, userData?.user_id);
             }, []);
         } else {
             useEffect(() => {
@@ -100,8 +100,8 @@ function Cart() {
         const response = await apiInstance.post(`cart-view/`, formData);
 
         if (userData !== undefined) {
-            fetchCartData(cart_id, userData.user_id);
-            fetchCartTotal(cart_id, userData.user_id);
+            fetchCartData(cart_id, userData?.user_id);
+            fetchCartTotal(cart_id, userData?.user_id);
         } else {
             fetchCartData(cart_id, null);
             fetchCartTotal(cart_id, null);
@@ -115,14 +115,14 @@ function Cart() {
 
     const handleDeleteCartItem = async (item_id) => {
         const url = userData?.user_id
-            ? `/cart-delete/${cart_id}/${item_id}/${userData.user_id}/`
+            ? `/cart-delete/${cart_id}/${item_id}/${userData?.user_id}/`
             : `/cart-delete/${cart_id}/${item_id}/`;
 
         try {
             await apiInstance.delete(url).then((res) => {
                 if (userData !== undefined) {
-                    fetchCartData(cart_id, userData.user_id);
-                    fetchCartTotal(cart_id, userData.user_id);
+                    fetchCartData(cart_id, userData?.user_id);
+                    fetchCartTotal(cart_id, userData?.user_id);
                 } else {
                     fetchCartData(cart_id, null);
                     fetchCartTotal(cart_id, null);

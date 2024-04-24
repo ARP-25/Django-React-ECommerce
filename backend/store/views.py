@@ -421,7 +421,6 @@ class StripeCheckoutAPIView(generics.CreateAPIView):
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
 
-
 class PaymentSuccessView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer
     queryset = CartOrder.objects.all()
@@ -461,4 +460,4 @@ class PaymentSuccessView(generics.CreateAPIView):
         else:
             return Response({'message': 'Session ID not found!'}, status=status.HTTP_400_BAD_REQUEST)
 
-                
+
