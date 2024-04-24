@@ -193,7 +193,7 @@ class CartOrder(models.Model):
     country = models.CharField(max_length=100, null=True, blank=True)
 
     #Stripe, Coupon
-
+    stripe_session_id = models.CharField(max_length=1000, null=True, blank=True)
     oid = ShortUUIDField(unique=True, length=10, prefix="O", alphabet="abcdefg123456789")
     date = models.DateTimeField(auto_now_add=True)
 

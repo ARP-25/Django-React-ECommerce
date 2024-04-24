@@ -6,6 +6,7 @@ import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartID";
 import GetCurrentAddress from "../plugin/UserCountry";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Toast = Swal.mixin({
     toast: true,
@@ -32,6 +33,8 @@ function Cart() {
     const userData = UserData();
     const cart_id = CartID();
     const currentAddress = GetCurrentAddress();
+
+    const navigate = useNavigate();
 
     // Fetch Cart Data Function
     const fetchCartData = (cart_id, user_id) => {
@@ -162,11 +165,39 @@ function Cart() {
             default:
                 break;
         }
-        console.log(name, value);
     };
 
     const createOrder = async () => {
-        console.log(fullName, email, mobile, address, city, state, country);
+        if (!fullName || !email || !mobile || !address || !city || !state || !country) {
+            Toast.fire({
+                icon: "warning",
+                title: "Missing Fields!",
+                text: "Please fill all the fields",
+            });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("full_name", fullName);
+        formData.append("email", email);
+        formData.append("mobile", mobile);
+        formData.append("address", address);
+        formData.append("city", city);
+        formData.append("state", state);
+        formData.append("country", country);
+        formData.append("cart_id", cart_id);
+        formData.append("user_id", userData ? userData.user_id : 0);
+
+        try {
+            const response = await apiInstance.post("/create-order/", formData);
+            navigate(`/checkout/${response.data.order_oid}`);
+        } catch (error) {
+            console.error(
+                "Failed to create order:",
+                error.response ? error.response.data : error.message
+            );
+            return;
+        }
     };
 
     return (

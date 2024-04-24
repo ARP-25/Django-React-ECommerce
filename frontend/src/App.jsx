@@ -12,6 +12,7 @@ import MainWrapper from "./layout/MainWrapper";
 import Product from "./views/store/Product";
 import ProductDetail from "./views/store/ProductDetail";
 import Cart from "./views/store/Cart";
+import Checkout from "./views/store/Checkout";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/" element={<Product />} />
                 <Route path="/detail/:slug" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout/:order_id" element={<Checkout />} />
             </Routes>
             <StoreFooter />
         </BrowserRouter>

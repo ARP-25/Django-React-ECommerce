@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
@@ -7,11 +7,16 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
+import stripe.error
 
 
 from userauths.models import User
 
 from decimal import Decimal
+
+import stripe
+from backend.settings import stripe_secret_key, stripe_public_key
+
 
 from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon
 from .serializer import ProductReadSerializer
@@ -372,3 +377,46 @@ class CouponAPIView(generics.CreateAPIView):
         else:
             return Response({'message': 'Coupon already applied!', 'icon': 'warning'}, status=status.HTTP_200_OK)
                 
+
+class StripeCheckoutAPIView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    queryset = CartOrder.objects.all()
+    permission_classes = (AllowAny,)
+    # print(f"stripe_secret_key: {stripe_secret_key}")
+    # print(f"stripe_public_key: {stripe_public_key}")
+    def create(self):
+        order_oid = self.kwargs.get('order_oid')
+        order = get_object_or_404(CartOrder, oid=order_oid)
+
+        if not order:
+            return Response({'message': 'Order not found!'}, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                customer_email = order.email,
+                payment_method_types = ['card'],
+                line_items = [
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'product_data': {
+                                'name': order.full_name,
+                            },
+                            'unit_amount': int(order.total * 100),
+                        },
+                        'quantity': 1,
+                    },
+                ],
+                mode='payment',
+                success_url='http://localhost:5173/payment-success/' + order.oid + '?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url = 'http://localhost:5173/payment-failed/' + '?session_id={CHECKOUT_SESSION_ID}',
+                )
+            order.stripe_session_id = checkout_session.id
+            order.save()
+
+            return redirect(checkout_session.url, code=302)
+        
+        except stripe.error.StripeError as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
+
