@@ -264,7 +264,7 @@ class CreateOrderAPIView(generics.CreateAPIView):
         with transaction.atomic():
             order = CartOrder.objects.create(
                 buyer=user,
-                payment_status="processing",
+                payment_status="pending",
                 full_name=full_name,
                 email=email,
                 mobile=mobile,
@@ -421,7 +421,7 @@ class StripeCheckoutAPIView(generics.CreateAPIView):
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
 
-class PaymentSuccessView(generics.CreateAPIView):
+class PaymentSuccessAPIView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer
     queryset = CartOrder.objects.all()
     permission_classes = (AllowAny,)
@@ -438,15 +438,15 @@ class PaymentSuccessView(generics.CreateAPIView):
             session = stripe.checkout.Session.retrieve(session_id)
 
             if session.payment_status == 'paid':
-                if session.payment_status == 'processing':
+                if order.payment_status == 'pending':
                     order.payment_status = 'paid'
                     order.save()
                     # Send Notification
                     # Send Email to Buyer
                     # Send Email to Vendor
-                    return Response({'message': 'Payment Successful!'}, status=status.HTTP_200_OK)
+                    return Response({'message': 'Payment Successfull!'}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'message': 'Already payed!'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'Already paid!'}, status=status.HTTP_200_OK)
                 
             elif session.payment_status == 'cancelled':
                 return Response({'message': 'Payment Cancelled!'}, status=status.HTTP_400_BAD_REQUEST)

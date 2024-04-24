@@ -30,4 +30,5 @@ urlpatterns = [
 
     # Payment Endpoints
     path('stripe-checkout/<str:order_oid>/', store_views.StripeCheckoutAPIView.as_view(), name='stripe-checkout'),
+    path('payment-success/<str:order_oid>/', store_views.PaymentSuccessAPIView.as_view(), name='payment-success'),
 ]

@@ -27,12 +27,13 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['title']
     inlines = [GalleryInline, SpecificationInline, SizeInline, ColorInline]
 
+    
 class CartAdmin(admin.ModelAdmin):
     list_display = ['user', 'product', 'qty', 'price', 'total']
     search_fields = ['user__username', 'product__title']
 
 class CartOrderAdmin(admin.ModelAdmin):
-    list_display = ['oid', 'buyer', 'total', 'payment_status', 'order_status']
+    list_display = ['oid', 'buyer','email', 'total', 'payment_status', 'order_status']
     search_fields = ['buyer__username', 'oid']
 
 class CartOrderItemAdmin(admin.ModelAdmin):
@@ -64,7 +65,7 @@ class CouponAdmin(admin.ModelAdmin):
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Cart)
-admin.site.register(CartOrder)
+admin.site.register(CartOrder, CartOrderAdmin)
 admin.site.register(CartOrderItem)
 admin.site.register(ProductFaq, ProductFaqAdmin)
 admin.site.register(Review, ReviewAdmin)
