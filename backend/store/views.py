@@ -421,3 +421,44 @@ class StripeCheckoutAPIView(generics.CreateAPIView):
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
 
+
+class PaymentSuccessView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    queryset = CartOrder.objects.all()
+    permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+        order_oid = payload['order_oid']
+        session_id = payload['session_id']
+
+        order = CartOrder.objects.filter(oid=order_oid).first()
+        order_items = CartOrderItem.objects.filter(order=order)
+
+        if session_id != 'null':
+            session = stripe.checkout.Session.retrieve(session_id)
+
+            if session.payment_status == 'paid':
+                if session.payment_status == 'processing':
+                    order.payment_status = 'paid'
+                    order.save()
+                    # Send Notification
+                    # Send Email to Buyer
+                    # Send Email to Vendor
+                    return Response({'message': 'Payment Successful!'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message': 'Already payed!'}, status=status.HTTP_400_BAD_REQUEST)
+                
+            elif session.payment_status == 'cancelled':
+                return Response({'message': 'Payment Cancelled!'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            elif session.payment_status == 'unpaid':
+                return Response({'message': 'Payment Unpaid!'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            else:
+                return Response({'message': 'An error occured, try again...'}, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response({'message': 'Session ID not found!'}, status=status.HTTP_400_BAD_REQUEST)
+
+                
