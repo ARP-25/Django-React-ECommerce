@@ -3,10 +3,14 @@ import { useState, useEffect } from "react";
 import apiInstance from "../../utils/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { SERVER_URL } from "../../utils/constants";
 
 function Checkout() {
     const [order, setOrder] = useState([]);
+
     const [couponCode, setCouponCode] = useState("");
+
+    const [paymentLoading, setPaymentLoading] = useState(false);
 
     const param = useParams();
 
@@ -50,6 +54,11 @@ function Checkout() {
         } catch {
             console.log("Failed to apply coupon code");
         }
+    };
+
+    const payWithStripe = (event) => {
+        setPaymentLoading(true);
+        event.target.form.submit();
     };
 
     return (
@@ -264,17 +273,32 @@ function Checkout() {
                                         </div>
 
                                         <form
-                                            action={`http://127.0.0.1:8000/stripe-checkout/ORDER_ID/`}
+                                            action={`${SERVER_URL}api/v1/stripe-checkout/${order?.oid}/`}
                                             method="POST"
                                         >
-                                            <button
-                                                type="submit"
-                                                className="btn btn-primary btn-rounded w-100 mt-2"
-                                                style={{ backgroundColor: "#635BFF" }}
-                                            >
-                                                Pay with Stripe
-                                                <i className="fas fa-credit-card ps-2"></i>
-                                            </button>
+                                            {paymentLoading === false && (
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-primary btn-rounded w-100 mt-2"
+                                                    style={{ backgroundColor: "#635BFF" }}
+                                                    onClick={payWithStripe}
+                                                >
+                                                    Pay with Stripe
+                                                    <i className="fas fa-credit-card ps-2"></i>
+                                                </button>
+                                            )}
+                                            {paymentLoading === true && (
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-primary btn-rounded w-100 mt-2"
+                                                    style={{ backgroundColor: "#635BFF" }}
+                                                    onClick={payWithStripe}
+                                                    disabled
+                                                >
+                                                    Processing...
+                                                    <i className="fas fa-spinner fa-spin ps-2"></i>
+                                                </button>
+                                            )}
                                         </form>
 
                                         {/* <PayPalScriptProvider options={initialOptions}>

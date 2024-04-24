@@ -382,9 +382,10 @@ class StripeCheckoutAPIView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer
     queryset = CartOrder.objects.all()
     permission_classes = (AllowAny,)
+    stripe.api_key = stripe_secret_key
     # print(f"stripe_secret_key: {stripe_secret_key}")
     # print(f"stripe_public_key: {stripe_public_key}")
-    def create(self):
+    def create(self, request, *args, **kwargs):
         order_oid = self.kwargs.get('order_oid')
         order = get_object_or_404(CartOrder, oid=order_oid)
 
