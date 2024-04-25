@@ -18,7 +18,7 @@ import stripe
 from backend.settings import stripe_secret_key, stripe_public_key
 
 
-from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon
+from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification
 from .serializer import ProductReadSerializer
 from .serializer import ProductWriteSerializer
 from .serializer import CategorySerializer
@@ -26,10 +26,22 @@ from .serializer import CartSerializer
 from .serializer import CartOrderSerializer
 from .serializer import CartOrderItemSerializer
 from .serializer import CouponSerializer
+from .serializer import NotificationSerializer
 
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def send_notification(user=None, vendor=None, order=None, order_item=None):
+    Notification.objects.create(
+        user=user, 
+        vendor=vendor,
+        order=order,
+        order_item=order_item
+    )
+
+
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
@@ -441,7 +453,12 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
                 if order.payment_status == 'pending':
                     order.payment_status = 'paid'
                     order.save()
-                    # Send Notification
+                    # Send Notification to Customers
+                    if order.buyer != None:
+                        send_notification(user=order.buyer, order=order)
+                    # Send Notification to Vendors
+                    for o in order_items:
+                        send_notification(vendor=o.vendor, order=order, order_item=o)
                     # Send Email to Buyer
                     # Send Email to Vendor
                     return Response({'message': 'Payment Successfull!'}, status=status.HTTP_200_OK)
