@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -15,7 +17,7 @@ from userauths.models import User
 from decimal import Decimal
 
 import stripe
-from backend.settings import stripe_secret_key, stripe_public_key
+from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL
 
 
 from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification
@@ -459,8 +461,46 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
                     # Send Notification to Vendors
                     for o in order_items:
                         send_notification(vendor=o.vendor, order=order, order_item=o)
+
+                        # Send Email to Vendor
+                        context = {
+                            'order': order,
+                            'order_items': order_items,
+                            'vendor': o.vendor,
+                        }
+                        subject = 'New Sale!'
+                        text_body = render_to_string('email/vendor_sale.txt', context)
+                        html_body = render_to_string('email/vendor_sale.html', context)
+                        msg = EmailMultiAlternatives(
+                            subject = subject,
+                            from_email = FROM_EMAIL,
+                            to = [o.vendor.user.email],
+                            body = text_body,
+                        )
+                        msg.attach_alternative(html_body, 'text/html')
+                        msg.send()
+
                     # Send Email to Buyer
-                    # Send Email to Vendor
+                    context = {
+                        'order': order,
+                        'order_items': order_items,
+                    }
+                    subject = 'Order placed successfully!'
+                    text_body = render_to_string('email/customer_order_confirmation.txt', context)
+                    html_body = render_to_string('email/customer_order_confirmation.html', context)
+                    msg = EmailMultiAlternatives(
+                        subject = subject,
+                        from_email = FROM_EMAIL,
+                        to = [order.email],
+                        body = text_body,
+                    )
+                    msg.attach_alternative(html_body, 'text/html')
+                    msg.send()
+
+
+                        
+
+
                     return Response({'message': 'Payment Successfull!'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Already paid!'}, status=status.HTTP_200_OK)
