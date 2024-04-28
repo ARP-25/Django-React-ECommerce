@@ -354,7 +354,7 @@ class CouponAPIView(generics.CreateAPIView):
     queryset = Coupon.objects.all()
     permission_classes = (AllowAny,)
 
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         payload = request.data
         order_oid = payload['order_oid']
         coupon_code = payload['coupon_code']

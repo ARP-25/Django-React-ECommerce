@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import apiInstance from "../../utils/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { SERVER_URL } from "../../utils/constants";
+import { SERVER_URL, PAYPAL_CLIENT_ID } from "../../utils/constants";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 function Checkout() {
     const [order, setOrder] = useState([]);
@@ -59,6 +60,12 @@ function Checkout() {
     const payWithStripe = (event) => {
         setPaymentLoading(true);
         event.target.form.submit();
+    };
+
+    const initialOptions = {
+        clientId: PAYPAL_CLIENT_ID,
+        currency: "USD",
+        intent: "capture",
     };
 
     return (
@@ -301,44 +308,71 @@ function Checkout() {
                                             )}
                                         </form>
 
-                                        {/* <PayPalScriptProvider options={initialOptions}>
-                                            <PayPalButtons
-                                                className="mt-3"
-                                                createOrder={(data, actions) => {
-                                                    return actions.order.create({
-                                                        purchase_units: [
-                                                            {
-                                                                amount: {
-                                                                    currency_code: "USD",
-                                                                    value: 100,
+                                        {order.total && (
+                                            <PayPalScriptProvider options={initialOptions}>
+                                                <PayPalButtons
+                                                    className="mt-3"
+                                                    createOrder={(data, actions) => {
+                                                        console.log(
+                                                            "Order Data ============== ",
+                                                            order.total.toString()
+                                                        );
+                                                        return actions.order.create({
+                                                            purchase_units: [
+                                                                {
+                                                                    amount: {
+                                                                        currency_code: "USD",
+                                                                        value: order.total.toString(),
+                                                                    },
                                                                 },
-                                                            },
-                                                        ],
-                                                    });
-                                                }}
-                                                onApprove={(data, actions) => {
-                                                    return actions.order
-                                                        .capture()
-                                                        .then((details) => {
-                                                            const name =
-                                                                details.payer.name.given_name;
-                                                            const status = details.status;
-                                                            const payapl_order_id = data.orderID;
-
-                                                            console.log(status);
-                                                            if (status === "COMPLETED") {
-                                                                navigate(
-                                                                    `/payment-success/${order.oid}/?payapl_order_id=${payapl_order_id}`
-                                                                );
-                                                            }
+                                                            ],
                                                         });
-                                                }}
-                                            />
-                                        </PayPalScriptProvider> */}
+                                                    }}
+                                                    onApprove={(data, actions) => {
+                                                        return actions.order
+                                                            .capture()
+                                                            .then((details) => {
+                                                                const name =
+                                                                    details.payer.name.given_name;
+                                                                const status = details.status;
+                                                                const payapl_order_id =
+                                                                    data.orderID;
+                                                                console.log(
+                                                                    "Paypal Order ID",
+                                                                    payapl_order_id
+                                                                );
+                                                                console.log("Name", name);
+                                                                console.log("Status", status);
+                                                                // console.log(status);
+                                                                // if (status === "COMPLETED") {
+                                                                //     navigate(
+                                                                //         `/payment-success/${order.oid}/?payapl_order_id=${payapl_order_id}`
+                                                                //     );
+                                                                // }
+                                                            });
+                                                    }}
+                                                />
+                                            </PayPalScriptProvider>
+                                        )}
 
-                                        {/* <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Flutterwave)</button>
-                                <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paystack)</button>
-                                <button type="button" className="btn btn-primary btn-rounded w-100 mt-2">Pay Now (Paypal)</button> */}
+                                        {/* <button
+                                            type="button"
+                                            className="btn btn-primary btn-rounded w-100 mt-2"
+                                        >
+                                            Pay Now (Flutterwave)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary btn-rounded w-100 mt-2"
+                                        >
+                                            Pay Now (Paystack)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary btn-rounded w-100 mt-2"
+                                        >
+                                            Pay Now (Paypal)
+                                        </button> */}
                                     </section>
                                 </div>
                             </div>

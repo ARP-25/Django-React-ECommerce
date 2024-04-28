@@ -29,3 +29,7 @@
 
 -   [ ] Conduct performance testing and address potential bottlenecks.
 -   [ ] Evaluate and plan for scalability enhancements.
+
+# Improvement Plan for PaymentSuccessAPIView
+
+-   [ ] Modify confirmation Email Templates further to also handle Coupon Discount displaying
