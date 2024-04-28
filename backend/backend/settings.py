@@ -272,3 +272,6 @@ ANYMAIL = {
 
 FROM_EMAIL = 'angelo.pucci@web.de'
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+PAYPAY_SECRET_KEY = os.getenv('PAYPAL_SECRET_KEY')

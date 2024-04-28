@@ -17,7 +17,9 @@ from userauths.models import User
 from decimal import Decimal
 
 import stripe
-from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL
+import requests
+
+from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL, PAYPAL_CLIENT_ID, PAYPAL_SECRET_ID
 
 
 from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification
@@ -434,6 +436,20 @@ class StripeCheckoutAPIView(generics.CreateAPIView):
         except stripe.error.StripeError as e:
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
+
+def get_access_token(client_id, secret_id):
+    token_url = 'https://api.sandbox.paypal.com/v1/oauth2/token'
+    data = {'grant_type': 'client_credentials'}
+    auth = (client_id, secret_id)
+    response = requests.post(token_url, data=data, auth=auth)
+
+    if response.status_code == 200:
+        print(response.json()['access_token'])
+        return response.json()['access_token']
+    else:
+        raise Exception(f'Failed to get access token: {response.status_code} - {response.text}')
+
+
 
 class PaymentSuccessAPIView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer
