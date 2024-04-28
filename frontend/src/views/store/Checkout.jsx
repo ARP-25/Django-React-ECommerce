@@ -14,6 +14,7 @@ function Checkout() {
     const [paymentLoading, setPaymentLoading] = useState(false);
 
     const param = useParams();
+    const navigate = useNavigate();
 
     const fetchOrderData = () => {
         if (param.order_id) {
@@ -337,18 +338,14 @@ function Checkout() {
                                                                 const status = details.status;
                                                                 const payapl_order_id =
                                                                     data.orderID;
-                                                                console.log(
-                                                                    "Paypal Order ID",
-                                                                    payapl_order_id
-                                                                );
-                                                                console.log("Name", name);
-                                                                console.log("Status", status);
-                                                                // console.log(status);
-                                                                // if (status === "COMPLETED") {
-                                                                //     navigate(
-                                                                //         `/payment-success/${order.oid}/?payapl_order_id=${payapl_order_id}`
-                                                                //     );
-                                                                // }
+                                                                console.log(status);
+                                                                console.log(name);
+                                                                console.log(payapl_order_id);
+                                                                if (status === "COMPLETED") {
+                                                                    navigate(
+                                                                        `/payment-success/${order.oid}/?paypal_order_id=${payapl_order_id}`
+                                                                    );
+                                                                }
                                                             });
                                                     }}
                                                 />

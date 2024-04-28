@@ -10,7 +10,9 @@ function PaymentSuccess() {
     const param = useParams();
     const urlParam = new URLSearchParams(window.location.search);
     const sessionID = urlParam.get("session_id");
+    const paypal_order_id = urlParam.get("paypal_order_id");
 
+    console.log("Paypal Order ID:", paypal_order_id);
     useEffect(() => {
         apiInstance.get(`checkout/${param?.order_oid}`).then((res) => {
             setOrder(res.data);
@@ -22,12 +24,13 @@ function PaymentSuccess() {
             const formData = new FormData();
             formData.append("order_oid", param?.order_oid);
             formData.append("session_id", sessionID);
+            formData.append("paypal_order_id", paypal_order_id);
 
             console.log("Sending request with Order OID:", order.oid, "and Session ID:", sessionID);
             setStatus("Verifying Payment...");
 
             apiInstance
-                .post(`payment-success/${order.oid}/`, formData)
+                .post(`payment-success/${param?.order_oid}/`, formData)
                 .then((res) => {
                     console.log("API response received:", res.data.message);
                     switch (res.data.message) {

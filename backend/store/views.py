@@ -19,7 +19,7 @@ from decimal import Decimal
 import stripe
 import requests
 
-from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL, PAYPAL_CLIENT_ID, PAYPAL_SECRET_ID
+from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL, PAYPAL_CLIENT_ID, PAYPAL_SECRET_KEY
 
 
 from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification
@@ -437,10 +437,11 @@ class StripeCheckoutAPIView(generics.CreateAPIView):
             return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
 
-def get_access_token(client_id, secret_id):
-    token_url = 'https://api.sandbox.paypal.com/v1/oauth2/token'
+def get_access_token(client_id, secret_key):
+    print("PayPal Client ID ========= ", client_id)  # Log PayPal client ID
+    token_url = 'https://api-m.sandbox.paypal.com/v1/oauth2/token'
     data = {'grant_type': 'client_credentials'}
-    auth = (client_id, secret_id)
+    auth = (client_id, secret_key)
     response = requests.post(token_url, data=data, auth=auth)
 
     if response.status_code == 200:
@@ -458,12 +459,80 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         payload = request.data
+
         order_oid = payload['order_oid']
         session_id = payload['session_id']
+        paypal_order_id = payload['paypal_order_id']
+
+        print("Paypal Order ID ===", paypal_order_id)
 
         order = CartOrder.objects.filter(oid=order_oid).first()
         order_items = CartOrderItem.objects.filter(order=order)
 
+       
+
+        # Paypal Payment
+        if paypal_order_id != 'null':
+            paypal_api_url = f'https://api-m.sandbox.paypal.com/v2/checkout/orders/{paypal_order_id}'
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {get_access_token(PAYPAL_CLIENT_ID, PAYPAL_SECRET_KEY)}'
+            }
+            response = requests.get(paypal_api_url, headers=headers)
+            
+            if response.status_code == 200:
+                paypal_order_data = response.json()
+                paypal_payment_status = paypal_order_data['status']
+                if paypal_payment_status == 'COMPLETED':
+                    if order.payment_status == 'pending':
+                        order.payment_status = 'paid'
+                        order.save()
+                        # Send Notification to Customers
+                        if order.buyer != None:
+                            send_notification(user=order.buyer, order=order)
+                        # Send Notification to Vendors
+                        for o in order_items:
+                            send_notification(vendor=o.vendor, order=order, order_item=o)
+
+                            # Send Email to Vendor
+                            context = {
+                                'order': order,
+                                'order_items': order_items,
+                                'vendor': o.vendor,
+                            }
+                            subject = 'New Sale!'
+                            text_body = render_to_string('email/vendor_sale.txt', context)
+                            html_body = render_to_string('email/vendor_sale.html', context)
+                            msg = EmailMultiAlternatives(
+                                subject = subject,
+                                from_email = FROM_EMAIL,
+                                to = [o.vendor.user.email],
+                                body = text_body,
+                            )
+                            msg.attach_alternative(html_body, 'text/html')
+                            msg.send()
+
+                    # Send Email to Buyer
+                    context = {
+                        'order': order,
+                        'order_items': order_items,
+                    }
+                    subject = 'Order placed successfully!'
+                    text_body = render_to_string('email/customer_order_confirmation.txt', context)
+                    html_body = render_to_string('email/customer_order_confirmation.html', context)
+                    msg = EmailMultiAlternatives(
+                        subject = subject,
+                        from_email = FROM_EMAIL,
+                        to = [order.email],
+                        body = text_body,
+                    )
+                    msg.attach_alternative(html_body, 'text/html')
+                    msg.send()
+                    return Response({'message': 'Payment Successfull!'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message': 'Your invoice is unpaid'}, status=status.HTTP_200_OK)
+
+        # Stripe Payment
         if session_id != 'null':
             session = stripe.checkout.Session.retrieve(session_id)
 
@@ -512,11 +581,6 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
                     )
                     msg.attach_alternative(html_body, 'text/html')
                     msg.send()
-
-
-                        
-
-
                     return Response({'message': 'Payment Successfull!'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'message': 'Already paid!'}, status=status.HTTP_200_OK)
