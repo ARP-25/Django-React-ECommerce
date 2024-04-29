@@ -22,7 +22,7 @@ import requests
 from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL, PAYPAL_CLIENT_ID, PAYPAL_SECRET_KEY
 
 
-from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification
+from .models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification, Review
 from .serializer import ProductReadSerializer
 from .serializer import ProductWriteSerializer
 from .serializer import CategorySerializer
@@ -31,6 +31,7 @@ from .serializer import CartOrderSerializer
 from .serializer import CartOrderItemSerializer
 from .serializer import CouponSerializer
 from .serializer import NotificationSerializer
+from .serializer import ReviewSerializer
 
 import logging
 
@@ -598,3 +599,18 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
             return Response({'message': 'Session ID not found!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+class ReviewListAPIView(generics.ListAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        product_id = self.kwargs.get('product_id')
+        product = Product.objects.get(id=product_id)
+
+        reviews = Review.objects.filter(product=product)
+        return reviews
+    
+
+    

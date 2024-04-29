@@ -161,10 +161,7 @@ class ProductFaqSerializer(serializers.ModelSerializer):
             self.Meta.depth = 3
 
 
-class ReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review
-        fields = '__all__'
+
 
 
 class WishlistSerializer(serializers.ModelSerializer):
@@ -193,7 +190,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super(ReviewSerializer, self).__init__(*args, **kwargs)
         request = kwargs.get('context', {}).get('request')
-        if request.METHOD == 'POST':
+        if request.method.upper() == 'POST':
             self.Meta.depth = 0
         else:
             self.Meta.depth = 3
