@@ -8,6 +8,7 @@ import GetCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartID";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 function ProductDetail() {
     const [product, setProduct] = useState({}); // Product details
@@ -16,6 +17,12 @@ function ProductDetail() {
     const [colors, setColors] = useState([]); // Product colors
     const [sizes, setSizes] = useState([]); // Product sizes
     const [reviews, setReviews] = useState([]); // Product reviews
+    const [createReview, setCreateReview] = useState({
+        user_id: 0,
+        product_id: product.id,
+        review: "",
+        rating: 0,
+    }); // Review form data
 
     const [colorValue, setColorValue] = useState("No Color"); // Selected color
     const [sizeValue, setSizeValue] = useState("No Size"); // Selected size
@@ -26,6 +33,14 @@ function ProductDetail() {
 
     const userData = UserData();
     const cartID = CartID();
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+    });
 
     useEffect(() => {
         apiInstance.get(`/products/${param.slug}`).then((res) => {
@@ -92,6 +107,45 @@ function ProductDetail() {
     useEffect(() => {
         fetchReviewData();
     }, [product]);
+
+    const handleReviewChange = (event) => {
+        setCreateReview({ ...createReview, [event.target.name]: event.target.value });
+    };
+
+    useEffect(() => {
+        console.log("Create Review Data", createReview);
+    }, [createReview]);
+
+    const handleReviewSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            if (!userData) {
+                Toast.fire({
+                    icon: "info",
+                    title: "Please login to submit a review",
+                });
+            }
+            const formData = new FormData();
+            formData.append("user_id", userData?.user_id);
+            formData.append("product_id", product.id);
+            formData.append("review", createReview.review);
+            formData.append("rating", createReview.rating);
+
+            const response = await apiInstance.post(`reviews/${product.id}/`, formData);
+            console.log("Review Submitted", response.data);
+            Toast.fire({
+                icon: "success",
+                title: "Review submitted successfully",
+            });
+            fetchReviewData();
+        } catch (error) {
+            console.error("Failed to submit review:", error);
+            Toast.fire({
+                icon: "error",
+                title: "Failed to submit review",
+            });
+        }
+    };
 
     return (
         <main className="mb-4 mt-4">
@@ -469,17 +523,22 @@ function ProductDetail() {
                                 {/* Column 1: Form to create a new review */}
                                 <div className="col-md-6">
                                     <h2>Create a New Review</h2>
-                                    <form>
+                                    <form onSubmit={handleReviewSubmit}>
                                         <div className="mb-3">
                                             <label htmlFor="username" className="form-label">
                                                 Rating
                                             </label>
-                                            <select name="" className="form-select" id="">
+                                            <select
+                                                name="rating"
+                                                className="form-select"
+                                                id=""
+                                                onChange={handleReviewChange}
+                                            >
                                                 <option value="1">1 Star</option>
-                                                <option value="1">2 Star</option>
-                                                <option value="1">3 Star</option>
-                                                <option value="1">4 Star</option>
-                                                <option value="1">5 Star</option>
+                                                <option value="2">2 Star</option>
+                                                <option value="3">3 Star</option>
+                                                <option value="4">4 Star</option>
+                                                <option value="5">5 Star</option>
                                             </select>
                                         </div>
                                         <div className="mb-3">
@@ -487,11 +546,13 @@ function ProductDetail() {
                                                 Review
                                             </label>
                                             <textarea
+                                                name="review"
                                                 className="form-control"
                                                 id="reviewText"
                                                 rows={4}
                                                 placeholder="Write your review"
-                                                defaultValue={""}
+                                                value={createReview.review}
+                                                onChange={handleReviewChange}
                                             />
                                         </div>
                                         <button type="submit" className="btn btn-primary">
