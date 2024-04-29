@@ -271,6 +271,7 @@ class Review(models.Model):
 
     review = models.TextField(max_length=1000)
     reply = models.TextField(max_length=1000)
+
     RATING_CHOICES = (
         (1, '1 Star'),
         (2, '2 Stars'),
@@ -279,6 +280,7 @@ class Review(models.Model):
         (5, '5 Stars'),
     )
     rating = models.IntegerField(default=None, choices=RATING_CHOICES)
+    
     active = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 

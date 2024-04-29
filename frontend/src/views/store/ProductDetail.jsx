@@ -7,6 +7,7 @@ import apiInstance from "../../utils/axios";
 import GetCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartID";
+import moment from "moment";
 
 function ProductDetail() {
     const [product, setProduct] = useState({}); // Product details
@@ -14,6 +15,7 @@ function ProductDetail() {
     const [gallery, setGallery] = useState([]); // Gallery images
     const [colors, setColors] = useState([]); // Product colors
     const [sizes, setSizes] = useState([]); // Product sizes
+    const [reviews, setReviews] = useState([]); // Product reviews
 
     const [colorValue, setColorValue] = useState("No Color"); // Selected color
     const [sizeValue, setSizeValue] = useState("No Size"); // Selected size
@@ -54,13 +56,6 @@ function ProductDetail() {
     };
 
     const handleAddToCart = async () => {
-        // console.log("Card ID: ", cartID);
-        // console.log("User Data: ", userData?.user_id);
-        // console.log("Product ID: ", product.id);
-        // console.log("Product Title: ", product.title);
-        // console.log("Product Price: ", product.price);
-        // console.log("Product Shipping: ", product.shipping_amount);
-        // console.log(sizeValue, colorValue, quantityValue);
         console.log(currentAddress.country);
         try {
             const formData = new FormData();
@@ -80,6 +75,23 @@ function ProductDetail() {
             console.error("Failed to add product to cart:", error);
         }
     };
+
+    const fetchReviewData = async () => {
+        try {
+            if (product && product.id) {
+                // Check if product and product.id are not null or undefined
+                const response = await apiInstance.get(`reviews/${product.id}`);
+                console.log("Response Data from fetchReviewData", response.data);
+                setReviews(response.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch review data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchReviewData();
+    }, [product]);
 
     return (
         <main className="mb-4 mt-4">
@@ -487,52 +499,40 @@ function ProductDetail() {
                                         </button>
                                     </form>
                                 </div>
+
                                 {/* Column 2: Display existing reviews */}
                                 <div className="col-md-6">
                                     <h2>Existing Reviews</h2>
-                                    <div className="card mb-3">
-                                        <div className="row g-0">
-                                            <div className="col-md-3">
-                                                <img
-                                                    src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
-                                                    alt="User Image"
-                                                    className="img-fluid"
-                                                />
-                                            </div>
-                                            <div className="col-md-9">
-                                                <div className="card-body">
-                                                    <h5 className="card-title">User 1</h5>
-                                                    <p className="card-text">August 10, 2023</p>
-                                                    <p className="card-text">
-                                                        This is a great product! I'm really
-                                                        satisfied with it.
-                                                    </p>
+                                    <div className="">
+                                        {reviews.map((r, index) => (
+                                            <div key={r.id} className="border p-2 mb-2 row g-0">
+                                                <div className="col-md-3">
+                                                    <img
+                                                        src={r.profile?.image}
+                                                        alt="User Image"
+                                                        className="img-fluid"
+                                                    />
+                                                </div>
+                                                <div className="col-md-9">
+                                                    <div className="ps-4">
+                                                        <h5 className="card-title">
+                                                            {r.user?.full_name}
+                                                        </h5>
+                                                        <p className="card-text">
+                                                            {moment(r.date).format("MMM D, YYYY")}
+                                                        </p>
+                                                        <p className="card-text">{r.review}</p>
+                                                        {[...Array(r.rating)].map((_, index) => (
+                                                            <i
+                                                                key={index}
+                                                                className="fa fa-star"
+                                                            ></i>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                    <div className="card mb-3">
-                                        <div className="row g-0">
-                                            <div className="col-md-3">
-                                                <img
-                                                    src="https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
-                                                    alt="User Image"
-                                                    className="img-fluid"
-                                                />
-                                            </div>
-                                            <div className="col-md-9">
-                                                <div className="card-body">
-                                                    <h5 className="card-title">User 2</h5>
-                                                    <p className="card-text">August 15, 2023</p>
-                                                    <p className="card-text">
-                                                        The quality of this product exceeded my
-                                                        expectations!
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* More reviews can be added here */}
                                 </div>
                             </div>
                         </div>

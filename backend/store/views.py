@@ -628,4 +628,6 @@ class ReviewListAPIView(generics.ListCreateAPIView):
             rating=rating,
             review=review
         )
+
+        return Response({'message': 'Review added successfully!'}, status=status.HTTP_201_CREATED)
     
