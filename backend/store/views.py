@@ -600,7 +600,7 @@ class PaymentSuccessAPIView(generics.CreateAPIView):
 
 
 
-class ReviewListAPIView(generics.ListAPIView):
+class ReviewListAPIView(generics.ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [AllowAny]
@@ -612,5 +612,20 @@ class ReviewListAPIView(generics.ListAPIView):
         reviews = Review.objects.filter(product=product)
         return reviews
     
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+        user_id = payload['user_id']
+        product_id = payload['product_id']
+        rating = payload['rating']
+        review = payload['review']
 
+        user = User.objects.get(id=user_id)
+        products = Product.objects.get(id=product_id)
+
+        Review.objects.create(
+            user=user,
+            product=products,
+            rating=rating,
+            review=review
+        )
     
