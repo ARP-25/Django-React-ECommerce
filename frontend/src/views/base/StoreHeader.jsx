@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auths";
+import { useEffect, useState } from "react";
 
 function StoreHeader() {
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn());
@@ -7,6 +8,22 @@ function StoreHeader() {
     const user = useAuthStore((state) => state.user());
     console.log("isLoggedIn", isLoggedIn);
     console.log("User", user);
+
+    const [search, setSearch] = useState("");
+
+    const handleSearchChange = (event) => {
+        setSearch(event.target.value);
+        console.log(search);
+    };
+
+    const navigate = useNavigate();
+
+    const handleSearchSubmit = (event) => {
+        event.preventDefault();
+        navigate(`/search?query=${search}`);
+        console.log("Search", search);
+    };
+
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -188,7 +205,7 @@ function StoreHeader() {
                         {/*Header Nav Pages / Search */}
                         <div className="d-flex">
                             <input
-                                onChange={null}
+                                onChange={handleSearchChange}
                                 name="search"
                                 className="form-control me-2"
                                 type="text"
@@ -196,7 +213,7 @@ function StoreHeader() {
                                 aria-label="Search"
                             />
                             <button
-                                onClick={null}
+                                onClick={handleSearchSubmit}
                                 className="btn btn-outline-success me-2"
                                 type="submit"
                             >
