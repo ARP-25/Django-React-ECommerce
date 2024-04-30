@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import apiInstance from "../../utils/axios";
 import { Link } from "react-router-dom";
 import GetCurrentAddress from "../plugin/UserCountry";
 import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartID";
 import Swal from "sweetalert2";
+import { CartContext } from "../plugin/Context";
 
 const Toast = Swal.mixin({
     toast: true,
@@ -28,6 +29,8 @@ function Product() {
     const [selectedQuantity, setSelectedQuantity] = useState({});
     const [selectedColors, setSelectedColors] = useState({});
     const [selectedSizes, setSelectedSizes] = useState({});
+
+    const [cartCount, setCartCount] = useContext(CartContext);
 
     useEffect(() => {
         const response = apiInstance
@@ -89,8 +92,16 @@ function Product() {
         formData.append("size", selectedSizes[product_id] || "No Size");
         formData.append("color", selectedColors[product_id] || "No Color");
 
+        // Send a POST request to add product to cart
         const response = await apiInstance.post(`cart-view/`, formData);
-        console.log(response.data);
+
+        // Fetch updated cart items
+        const url = userData
+            ? `/cart-list/${cart_id}/${userData?.user_id}`
+            : `/cart-list/${cart_id}`;
+        apiInstance.get(url).then((res) => {
+            setCartCount(res.data.length);
+        });
 
         Toast.fire({
             icon: "success",

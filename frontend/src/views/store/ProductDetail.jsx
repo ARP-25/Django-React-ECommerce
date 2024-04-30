@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import apiInstance from "../../utils/axios";
 import GetCurrentAddress from "../plugin/UserCountry";
@@ -9,6 +9,7 @@ import UserData from "../plugin/UserData";
 import CartID from "../plugin/CartID";
 import moment from "moment";
 import Swal from "sweetalert2";
+import { CartContext } from "../plugin/Context";
 
 function ProductDetail() {
     const [product, setProduct] = useState({}); // Product details
@@ -41,6 +42,8 @@ function ProductDetail() {
         timer: 3000,
         timerProgressBar: true,
     });
+
+    const [cartCount, setCartCount] = useContext(CartContext);
 
     useEffect(() => {
         apiInstance.get(`/products/${param.slug}`).then((res) => {
@@ -84,8 +87,16 @@ function ProductDetail() {
             formData.append("color", colorValue);
             formData.append("cart_id", cartID);
 
-            const response = await apiInstance.post(`cart-view/`, formData);
-            console.log(response.data);
+            // Send a POST request to add product to cart
+            await apiInstance.post(`cart-view/`, formData);
+
+            // Fetch updated cart items
+            const url = userData
+                ? `/cart-list/${cartID}/${userData?.user_id}`
+                : `/cart-list/${cartID}`;
+            apiInstance.get(url).then((res) => {
+                setCartCount(res.data.length);
+            });
         } catch (error) {
             console.error("Failed to add product to cart:", error);
         }

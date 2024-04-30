@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auths";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { CartContext } from "../plugin/Context";
 
 function StoreHeader() {
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn());
@@ -23,6 +24,8 @@ function StoreHeader() {
         navigate(`/search?query=${search}`);
         console.log("Search", search);
     };
+
+    const cartCount = useContext(CartContext);
 
     return (
         <div>
@@ -244,7 +247,7 @@ function StoreHeader() {
                         )}
                         <Link className="btn btn-danger mt-2 mt-lg-0" to="/cart/">
                             <i className="fas fa-shopping-cart"></i>{" "}
-                            <span id="cart-total-items">0</span>
+                            <span id="cart-total-items">{cartCount}</span>
                         </Link>
                     </div>
                 </div>
