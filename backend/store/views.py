@@ -267,6 +267,8 @@ class CreateOrderAPIView(generics.CreateAPIView):
         cart_id = payload['cart_id']
         user_id = payload['user_id']
 
+        print("User ID =========", user_id)
+        
         if user_id != "0":
             try:
                 user_id_int = int(user_id)  
