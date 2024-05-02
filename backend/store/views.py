@@ -158,7 +158,7 @@ class CartListAPIView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        cart_id = self.kwargs.get('cart_id')  # Ensuring you are retrieving from the correct place
+        cart_id = self.kwargs.get('cart_id')  
         user_id = self.kwargs.get('user_id')
 
         if user_id is not None:
@@ -268,7 +268,7 @@ class CreateOrderAPIView(generics.CreateAPIView):
         user_id = payload['user_id']
 
         print("User ID =========", user_id)
-        
+
         if user_id != "0":
             try:
                 user_id_int = int(user_id)  

@@ -33,3 +33,7 @@
 # Improvement Plan for PaymentSuccessAPIView
 
 -   [ ] Modify confirmation Email Templates further to also handle Coupon Discount displaying
+
+###
+
+-   [] Remove items from cart when sucessfully checked out. Thas has to include: - Local Storage cartID removal. - And possibly create a field like "status" for the Cart model thats gets set to "Pending, Checked Out, Completed or Expired"
