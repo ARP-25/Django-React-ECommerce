@@ -10,6 +10,8 @@ from userauths.serializer import MyTokenObtainPairSerializer, RegisterSerializer
 import random
 import shortuuid
 
+from .serializer import ProfileSerializer
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -77,3 +79,16 @@ class PasswordChangeView(generics.CreateAPIView):
         user.save()
 
         return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+    
+
+class ProfileAPIView(generics.RetrieveAPIView):
+    permission_classes = [AllowAny,]
+    serializer_class = ProfileSerializer
+
+    def get_object(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+        profile = Profile.objects.get(user=user)
+
+        return profile
+
