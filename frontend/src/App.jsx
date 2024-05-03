@@ -20,6 +20,9 @@ import CartID from "./views/plugin/CartID";
 import UserData from "./views/plugin/UserData";
 import apiInstance from "./utils/axios";
 import Account from "./views/customer/Account";
+import PrivateRoute from "./layout/PrivateRoute";
+import Orders from "./views/customer/Orders";
+import Sidebar from "./views/customer/Sidebar";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -57,7 +60,22 @@ function App() {
                     <Route path="/payment-success/:order_oid" element={<PaymentSuccess />} />
                     <Route path="/search" element={<Search />} />
                     {/* Customer Components */}
-                    <Route path="/account" element={<Account />} />
+                    <Route
+                        path="customer/account/"
+                        element={
+                            <PrivateRoute>
+                                <Account />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="customer/orders/"
+                        element={
+                            <PrivateRoute>
+                                <Orders />
+                            </PrivateRoute>
+                        }
+                    />
                 </Routes>
                 <StoreFooter />
             </BrowserRouter>
