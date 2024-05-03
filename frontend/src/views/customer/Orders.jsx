@@ -155,10 +155,10 @@ function Orders() {
                                                     </thead>
                                                     <tbody>
                                                         {orders.map((o, index) => (
-                                                            <tr key={o.id}>
+                                                            <tr key={o.oid}>
                                                                 <td>
                                                                     <p className="fw-bold mb-1">
-                                                                        #{o.id}{" "}
+                                                                        #{o.oid}{" "}
                                                                     </p>
                                                                     <p className="text-muted mb-0">
                                                                         {moment(o.date).format(
@@ -182,13 +182,13 @@ function Orders() {
                                                                     </span>
                                                                 </td>
                                                                 <td>
-                                                                    <button
-                                                                        type="button"
+                                                                    <Link
+                                                                        to={`/customer/orders/${o.oid}/`}
                                                                         className="btn btn-link btn-sm btn-rounded"
                                                                     >
                                                                         View{" "}
-                                                                        <i className="fas fa-eye" />
-                                                                    </button>
+                                                                        <i className="fas fa-eye ps-1" />
+                                                                    </Link>
                                                                 </td>
                                                             </tr>
                                                         ))}

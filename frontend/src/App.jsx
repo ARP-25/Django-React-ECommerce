@@ -23,6 +23,7 @@ import Account from "./views/customer/Account";
 import PrivateRoute from "./layout/PrivateRoute";
 import Orders from "./views/customer/Orders";
 import Sidebar from "./views/customer/Sidebar";
+import OrderDetail from "./views/customer/OrderDetail";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -73,6 +74,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <Orders />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="customer/orders/:order_oid/"
+                        element={
+                            <PrivateRoute>
+                                <OrderDetail />
                             </PrivateRoute>
                         }
                     />
