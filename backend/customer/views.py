@@ -22,7 +22,7 @@ import requests
 from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL, PAYPAL_CLIENT_ID, PAYPAL_SECRET_KEY
 
 
-from store.models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification, Review
+from store.models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification, Review, Wishlist
 from store.serializer import ProductReadSerializer
 from store.serializer import ProductWriteSerializer
 from store.serializer import CategorySerializer
@@ -32,7 +32,7 @@ from store.serializer import CartOrderItemSerializer
 from store.serializer import CouponSerializer
 from store.serializer import NotificationSerializer
 from store.serializer import ReviewSerializer
-
+from store.serializer import WishlistSerializer
 
 class OrdersAPIView(generics.ListAPIView):
     queryset = CartOrder.objects.all()
@@ -57,3 +57,32 @@ class OrderDetailAPIView(generics.RetrieveAPIView):
         order_id = self.kwargs['order_oid']
         order = CartOrder.objects.get(buyer=user, oid=order_id, payment_status='paid')
         return order
+    
+
+class WishlistAPIView(generics.ListCreateAPIView):
+    serializer_class = WishlistSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+        wishlists = Wishlist.objects.filter(user=user)
+
+        return wishlists
+    
+    def create(self, request):
+        payload = request.data
+        product_id = payload['product_id']
+        user_id = payload['user_id']
+
+        product = Product.objects.get(id=product_id)
+        user = User.objects.get(id=user_id)
+
+        wishlist = Wishlist.objects.filter(user=user, product=product)
+
+        if wishlist.exists():
+            wishlist.delete()
+            return Response({'message': 'Product removed from wishlist'}, status=status.HTTP_200_OK)
+        else:
+            Wishlist.objects.create(user=user, product=product)
+            return Response({'message': 'Product added to wishlist'}, status=status.HTTP_201_CREATED)

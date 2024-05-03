@@ -73,3 +73,4 @@ admin.site.register(Wishlist, WishlistAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(Coupon, CouponAdmin)
 admin.site.register(Tax)
+

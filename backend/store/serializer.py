@@ -168,9 +168,19 @@ class ProductFaqSerializer(serializers.ModelSerializer):
 
 
 class WishlistSerializer(serializers.ModelSerializer):
+    product = ProductReadSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Wishlist
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(WishlistSerializer, self).__init__(*args, **kwargs)
+        request = kwargs.get('context', {}).get('request')
+        if request.method.upper() == 'POST':
+            self.Meta.depth = 0
+        else:
+            self.Meta.depth = 3
 
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -195,18 +205,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         depth = 3
 
 
-class WishlistSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wishlist
-        fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
-        super(WishlistSerializer, self).__init__(*args, **kwargs)
-        request = kwargs.get('context', {}).get('request')
-        if request.METHOD == 'POST':
-            self.Meta.depth = 0
-        else:
-            self.Meta.depth = 3
 
 
 class CouponSerializer(serializers.ModelSerializer):
