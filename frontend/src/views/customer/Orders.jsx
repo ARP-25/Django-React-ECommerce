@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import UserData from "../plugin/UserData";
 import { Link } from "react-router-dom";
 import moment from "moment";
+
 function Orders() {
     const [orders, setOrders] = useState([]);
     const userData = UserData();
@@ -188,6 +189,13 @@ function Orders() {
                                                                     >
                                                                         View{" "}
                                                                         <i className="fas fa-eye ps-1" />
+                                                                    </Link>
+                                                                    <Link
+                                                                        to={`/customer/invoice/${o.oid}/`}
+                                                                        className="btn btn-link btn-sm btn-rounded"
+                                                                    >
+                                                                        Invoice{" "}
+                                                                        <i className="fas fa-file-invoice ps-1" />
                                                                     </Link>
                                                                 </td>
                                                             </tr>
