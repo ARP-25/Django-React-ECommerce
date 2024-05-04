@@ -70,7 +70,7 @@ class WishlistAPIView(generics.ListCreateAPIView):
 
         return wishlists
     
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         payload = request.data
         product_id = payload['product_id']
         user_id = payload['user_id']
