@@ -81,7 +81,7 @@ class PasswordChangeView(generics.CreateAPIView):
         return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
     
 
-class ProfileAPIView(generics.RetrieveAPIView):
+class ProfileAPIView(generics.RetrieveUpdateAPIView):
     permission_classes = [AllowAny,]
     serializer_class = ProfileSerializer
 
@@ -91,4 +91,10 @@ class ProfileAPIView(generics.RetrieveAPIView):
         profile = Profile.objects.get(user=user)
 
         return profile
+    
+
+
+    
+
+
 

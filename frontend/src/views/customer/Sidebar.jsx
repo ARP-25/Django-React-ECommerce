@@ -65,7 +65,7 @@ function Sidebar() {
                     <div className="ms-2 me-auto">
                         <div className="fw-bold">
                             <Link className="text-dark" to={`/customer/notifications/`}>
-                                Notification
+                                Notifications
                             </Link>
                         </div>
                     </div>
@@ -74,7 +74,9 @@ function Sidebar() {
                 <li className="list-group-item d-flex justify-content-between align-items-start">
                     <div className="ms-2 me-auto">
                         <div className="fw-bold">
-                            <Link className="text-dark">Setting</Link>
+                            <Link className="text-dark" to={`/customer/settings/`}>
+                                Settings
+                            </Link>
                         </div>
                     </div>
                 </li>

@@ -26,6 +26,7 @@ import Sidebar from "./views/customer/Sidebar";
 import OrderDetail from "./views/customer/OrderDetail";
 import Wishlist from "./views/customer/Wishlist";
 import CustomerNotification from "./views/customer/CustomerNotification";
+import Settings from "./views/customer/Settings";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -99,6 +100,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <CustomerNotification />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/customer/settings/"
+                        element={
+                            <PrivateRoute>
+                                <Settings />
                             </PrivateRoute>
                         }
                     />
