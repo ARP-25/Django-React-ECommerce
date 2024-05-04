@@ -14,7 +14,6 @@ function Sidebar() {
                 .get(`/user/profile/${userData.user_id}/`)
                 .then((res) => {
                     setProfile(res.data);
-                    console.log(res.data);
                 })
                 .catch((error) => {
                     console.error("Failed to fetch user data:", error);
@@ -65,7 +64,9 @@ function Sidebar() {
                 <li className="list-group-item d-flex justify-content-between align-items-start">
                     <div className="ms-2 me-auto">
                         <div className="fw-bold">
-                            <Link className="text-dark">Notification</Link>
+                            <Link className="text-dark" to={`/customer/notifications/`}>
+                                Notification
+                            </Link>
                         </div>
                     </div>
                     <span className="badge bg-primary rounded-pill">14</span>

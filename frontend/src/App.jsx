@@ -25,6 +25,7 @@ import Orders from "./views/customer/Orders";
 import Sidebar from "./views/customer/Sidebar";
 import OrderDetail from "./views/customer/OrderDetail";
 import Wishlist from "./views/customer/Wishlist";
+import CustomerNotification from "./views/customer/CustomerNotification";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -52,7 +53,6 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/create-new-password" element={<CreatePassword />} />
                     {/*  Store Components */}
                     <Route path="/" element={<Product />} />
@@ -63,7 +63,7 @@ function App() {
                     <Route path="/search" element={<Search />} />
                     {/* Customer Components */}
                     <Route
-                        path="customer/account/"
+                        path="/customer/account/"
                         element={
                             <PrivateRoute>
                                 <Account />
@@ -71,7 +71,7 @@ function App() {
                         }
                     />
                     <Route
-                        path="customer/orders/"
+                        path="/customer/orders/"
                         element={
                             <PrivateRoute>
                                 <Orders />
@@ -79,7 +79,7 @@ function App() {
                         }
                     />
                     <Route
-                        path="customer/orders/:order_oid/"
+                        path="/customer/orders/:order_oid/"
                         element={
                             <PrivateRoute>
                                 <OrderDetail />
@@ -87,10 +87,18 @@ function App() {
                         }
                     />
                     <Route
-                        path="customer/wishlist/"
+                        path="/customer/wishlist/"
                         element={
                             <PrivateRoute>
                                 <Wishlist />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/customer/notifications/"
+                        element={
+                            <PrivateRoute>
+                                <CustomerNotification />
                             </PrivateRoute>
                         }
                     />

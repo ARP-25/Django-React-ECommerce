@@ -96,7 +96,7 @@ class CustomerNotification(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         user = User.objects.get(id=user_id)
-        notifications = Notification.objects.filter(user=user)
+        notifications = Notification.objects.filter(user=user, seen=False)
         return notifications
     
 

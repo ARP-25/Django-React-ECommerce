@@ -1,20 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/auths";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { CartContext } from "../plugin/Context";
 
 function StoreHeader() {
     const isLoggedIn = useAuthStore((state) => state.isLoggedIn());
-
     const user = useAuthStore((state) => state.user());
-    console.log("isLoggedIn", isLoggedIn);
-    console.log("User", user);
 
     const [search, setSearch] = useState("");
 
     const handleSearchChange = (event) => {
         setSearch(event.target.value);
-        console.log(search);
     };
 
     const navigate = useNavigate();
@@ -22,7 +18,6 @@ function StoreHeader() {
     const handleSearchSubmit = (event) => {
         event.preventDefault();
         navigate(`/search?query=${search}`);
-        console.log("Search", search);
     };
 
     const cartCount = useContext(CartContext);
@@ -46,7 +41,6 @@ function StoreHeader() {
                         <span className="navbar-toggler-icon" />
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        {/*Header Nav Pages / Acccount / Vendor */}
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item dropdown">
                                 <a
@@ -106,30 +100,30 @@ function StoreHeader() {
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li>
-                                        <Link to={"/customer/account/"} className="dropdown-item">
+                                        <Link to="/customer/account/" className="dropdown-item">
                                             <i className="fas fa-user"></i> Account
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link className="dropdown-item" to={`/customer/orders/`}>
+                                        <Link className="dropdown-item" to="/customer/orders/">
                                             <i className="fas fa-shopping-cart"></i> Orders
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link className="dropdown-item" to={`/customer/wishlist/`}>
+                                        <Link className="dropdown-item" to="/customer/wishlist/">
                                             <i className="fas fa-heart"></i> Wishlist
                                         </Link>
                                     </li>
                                     <li>
                                         <Link
                                             className="dropdown-item"
-                                            to={`/customer/notifications/`}
+                                            to="/customer/notifications/"
                                         >
                                             <i className="fas fa-bell fa-shake"></i> Notifications
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link className="dropdown-item" to={`/customer/settings/`}>
+                                        <Link className="dropdown-item" to="/customer/settings/">
                                             <i className="fas fa-gear fa-spin"></i> Settings
                                         </Link>
                                     </li>
@@ -205,7 +199,6 @@ function StoreHeader() {
                                 </ul>
                             </li>
                         </ul>
-                        {/*Header Nav Pages / Search */}
                         <div className="d-flex">
                             <input
                                 onChange={handleSearchChange}
