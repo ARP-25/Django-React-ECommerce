@@ -228,3 +228,11 @@ class NotificationSerializer(serializers.ModelSerializer):
         else:
             self.Meta.depth = 3
         return representation
+    
+
+class SummarySerializer(serializers.Serializer):
+    products = serializers.IntegerField()
+    orders = serializers.IntegerField()
+    revenue = serializers.DecimalField(max_digits=120, decimal_places=2)
+
+    

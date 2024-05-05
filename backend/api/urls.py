@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from userauths import views as userauths_views
 from store import views as store_views
 from customer import views as customer_views
+from vendor import views as vendor_views
 
 urlpatterns = [
     path('user/token/', userauths_views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -42,4 +43,6 @@ urlpatterns = [
     path('customer/notification/<int:user_id>/', customer_views.CustomerNotification.as_view(), name='notification'),
     path('customer/notification/<int:user_id>/<int:noti_id>/', customer_views.MarkCustomerNotificationAsSeen.as_view(), name='notification'),
 
+    # Vendor Endpoints
+    path('vendor/stats/<vendor_id>/', vendor_views.DashboardStatsAPIView.as_view(), name='dashboard-stats'),
 ]
