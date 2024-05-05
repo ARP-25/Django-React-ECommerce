@@ -1,12 +1,29 @@
 import React from "react";
 import Sidebar from "../vendor/Sidebar";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import apiInstance from "../../utils/axios";
+import UserData from "../plugin/UserData";
 
 function Dashboard() {
+    const [stats, setStats] = useState({});
+
+    useEffect(() => {
+        apiInstance
+            .get(`/vendor/stats/${UserData()?.vendor_id}/`)
+            .then((res) => {
+                setStats(res.data[0]);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
+    console.log(stats);
+
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
-                {/* Add Side Bar Here */}
-                {/* <Sidebar /> */}
                 <Sidebar />
                 <div className="col-md-9 col-lg-10 main mt-4">
                     <div className="row mb-3">
@@ -17,7 +34,7 @@ function Dashboard() {
                                         <i className="bi bi-grid fa-5x" />
                                     </div>
                                     <h6 className="text-uppercase">Products</h6>
-                                    <h1 className="display-1">134</h1>
+                                    <h1 className="display-1">{stats.products}</h1>
                                 </div>
                             </div>
                         </div>
@@ -28,7 +45,7 @@ function Dashboard() {
                                         <i className="bi bi-cart-check fa-5x" />
                                     </div>
                                     <h6 className="text-uppercase">Orders</h6>
-                                    <h1 className="display-1">87</h1>
+                                    <h1 className="display-1">{stats.orders}</h1>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +67,7 @@ function Dashboard() {
                                         <i className="bi bi-currency-dollar fa-5x" />
                                     </div>
                                     <h6 className="text-uppercase">Revenue</h6>
-                                    <h1 className="display-1">$36</h1>
+                                    <h1 className="display-1">${stats.revenue}</h1>
                                 </div>
                             </div>
                         </div>

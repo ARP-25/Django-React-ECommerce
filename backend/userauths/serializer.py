@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import Profile, User
-
+from vendor.models import Vendor
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -13,8 +13,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['email'] = user.email
         token['full_name'] = user.profile.full_name
+        print(user.vendor.id)
         try:
-            token['vendor_id'] = user.profile.vendor_id
+            token['vendor_id'] = user.vendor.id
         except:
             token['vendor_id'] = 0
 
