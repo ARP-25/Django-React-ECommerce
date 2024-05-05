@@ -6,6 +6,7 @@ import apiInstance from "../../utils/axios";
 import UserData from "../plugin/UserData";
 import { Line } from "react-chartjs-2";
 import { Chart } from "chart.js/auto";
+
 function Dashboard() {
     const [stats, setStats] = useState({});
     const [orderChartData, setOrderChartData] = useState([]);
@@ -45,20 +46,11 @@ function Dashboard() {
             });
     }, []);
 
-    console.log(orderChartData);
-    console.log(productChartData);
-
     const order_months = orderChartData?.map((item) => item.month);
     const order_counts = orderChartData?.map((item) => item.orders);
 
-    console.log(order_months);
-    console.log(order_counts);
-
     const product_months = productChartData?.map((item) => item.month);
     const product_counts = productChartData?.map((item) => item.products);
-
-    console.log(product_months);
-    console.log(product_counts);
 
     const order_data = {
         labels: order_months,
