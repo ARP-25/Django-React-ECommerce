@@ -4,10 +4,36 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import apiInstance from "../../utils/axios";
 import UserData from "../plugin/UserData";
-
+import { Line } from "react-chartjs-2";
+import { Chart } from "chart.js/auto";
 function Dashboard() {
     const [stats, setStats] = useState({});
+    const [orderChartData, setOrderChartData] = useState([]);
+    const [productChartData, setProductChartData] = useState([]);
 
+    // Fetching Order Chart Data
+    const fetchOrderChartData = async () => {
+        const order_response = await apiInstance.get(
+            `/vendor-orders-chart/${UserData()?.vendor_id}/`
+        );
+        setOrderChartData(order_response.data);
+    };
+
+    // Fetching Product Chart Data
+    const fetchProductChartData = async () => {
+        const order_response = await apiInstance.get(
+            `/vendor-products-chart/${UserData()?.vendor_id}/`
+        );
+        setProductChartData(order_response.data);
+    };
+
+    // Fetching Order Chart and Product Chart Data
+    useEffect(() => {
+        fetchOrderChartData();
+        fetchProductChartData();
+    }, []);
+
+    // Fetching Order Stats Data
     useEffect(() => {
         apiInstance
             .get(`/vendor/stats/${UserData()?.vendor_id}/`)
@@ -19,7 +45,51 @@ function Dashboard() {
             });
     }, []);
 
-    console.log(stats);
+    console.log(orderChartData);
+    console.log(productChartData);
+
+    const order_months = orderChartData?.map((item) => item.month);
+    const order_counts = orderChartData?.map((item) => item.orders);
+
+    console.log(order_months);
+    console.log(order_counts);
+
+    const product_months = productChartData?.map((item) => item.month);
+    const product_counts = productChartData?.map((item) => item.products);
+
+    console.log(product_months);
+    console.log(product_counts);
+
+    const order_data = {
+        labels: order_months,
+        datasets: [
+            {
+                label: "Total Orders",
+                data: order_counts,
+                fill: true,
+                backgroundColor: "rgba(75,192,192,0.2)",
+                borderColor: "rgb(75, 192, 192)",
+                tension: 0.1,
+            },
+        ],
+    };
+
+    const product_data = {
+        labels: product_months,
+        datasets: [
+            {
+                label: "Total Products",
+                data: product_counts,
+                fill: true,
+                backgroundColor: "rgba(75,192,192,0.2)",
+                borderColor: "rgb(75, 192, 192)",
+                tension: 0.1,
+            },
+        ],
+    };
+
+    console.log("Product Data", product_data);
+    console.log("Order Data", order_data);
 
     return (
         <div className="container-fluid" id="main">
@@ -81,20 +151,20 @@ function Dashboard() {
                             </div>
                         </div>
                         <div className="row my-2">
-                            <div className="col-md-12 py-1">
+                            <div className="col-md-6 py-1">
                                 <div className="card">
                                     <div className="card-body">
-                                        <canvas id="line-chart" />
+                                        <Line data={order_data} style={{ height: 300 }} />
                                     </div>
                                 </div>
                             </div>
-                            {/* <div class="col-md-6 py-1">
-                  <div class="card">
-                      <div class="card-body">
-                          <canvas id="pie-chart"></canvas>
-                      </div>
-                  </div>
-              </div> */}
+                            <div className="col-md-6 py-1">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <Line data={product_data} style={{ height: 300 }} />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <a id="layouts" />
