@@ -184,12 +184,6 @@ class WishlistSerializer(serializers.ModelSerializer):
 
 
 
-class CouponSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Coupon
-        fields = '__all__'
-
-
 class ReviewSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
     user = UserSerializer(read_only=True)
@@ -218,14 +212,19 @@ class CouponSerializer(serializers.ModelSerializer):
 
 
 class NotificationSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    vendor = VendorSerializer(read_only=True)
+    order = CartOrderSerializer(read_only=True)
+    order_items = CartOrderItemSerializer(many=True, read_only=True)
     class Meta:
         model = Notification
         fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
-        super(NotificationSerializer, self).__init__(*args, **kwargs)
-        request = kwargs.get('context', {}).get('request')
-        if request.method.upper() == 'POST':
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request', None)
+        if request and request.method.upper() == 'POST':
             self.Meta.depth = 0
         else:
             self.Meta.depth = 3
+        return representation

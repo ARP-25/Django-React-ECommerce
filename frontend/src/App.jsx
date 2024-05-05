@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Login from "./views/auth/Login";
 import Register from "./views/auth/Register";
-import Dashboard from "./views/auth/Dashboard";
+
 import Logout from "./views/auth/Logout";
 import ForgotPassword from "./views/auth/ForgotPassword";
 import CreatePassword from "./views/auth/CreatePassword";
@@ -28,6 +28,7 @@ import Wishlist from "./views/customer/Wishlist";
 import CustomerNotification from "./views/customer/CustomerNotification";
 import Settings from "./views/customer/Settings";
 import Invoice from "./views/customer/Invoice";
+import Dashboard from "./views/vendor/Dashboard";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -50,20 +51,23 @@ function App() {
             <BrowserRouter>
                 <StoreHeader />
                 <Routes>
+                    {/* Main Routes */}
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/create-new-password" element={<CreatePassword />} />
-                    {/*  Store Components */}
+
+                    {/*  Store Routes */}
                     <Route path="/" element={<Product />} />
                     <Route path="/detail/:slug" element={<ProductDetail />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/checkout/:order_id" element={<Checkout />} />
                     <Route path="/payment-success/:order_oid" element={<PaymentSuccess />} />
                     <Route path="/search" element={<Search />} />
-                    {/* Customer Components */}
+
+                    {/* Customer Routes */}
                     <Route
                         path="/customer/account/"
                         element={
@@ -117,6 +121,16 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <Invoice />
+                            </PrivateRoute>
+                        }
+                    />
+
+                    {/* Vendor Routes */}
+                    <Route
+                        path="/vendor/dashboard/"
+                        element={
+                            <PrivateRoute>
+                                <Dashboard />
                             </PrivateRoute>
                         }
                     />
