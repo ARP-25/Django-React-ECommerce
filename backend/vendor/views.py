@@ -39,6 +39,7 @@ from store.serializer import ReviewSerializer
 from store.serializer import WishlistSerializer
 from store.serializer import SummarySerializer
 from store.serializer import CouponSummarySerializer
+from store.serializer import NotificationSummarySerializer
 
 
 class DashboardStatsAPIView(generics.ListAPIView):
@@ -283,6 +284,80 @@ class CouponStatsAPIView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
+
+
+class NotificationUnseenAPIView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+
+        return Notification.objects.filter(vendor=vendor, seen=False).order_by('-id')
+    
+
+class NotificationSeenAPIView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+
+        return Notification.objects.filter(vendor=vendor, seen=True).order_by('-id')
+    
+
+class NotificationSummaryAPIView(generics.ListAPIView):
+    serializer_class = NotificationSummarySerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+
+        unread_notification = Notification.objects.filter(vendor=vendor, seen=False).count()
+        read_notification = Notification.objects.filter(vendor=vendor, seen=True).count()
+        all_notification = Notification.objects.filter(vendor=vendor).count()
+
+        return [{
+            'read_notification': read_notification,
+            'unread_notification': unread_notification,
+            'all_notification': all_notification
+        }]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+
+class NotificationVendorMarkAsSeen(generics.RetrieveAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+
+        vendor_id = self.kwargs['vendor_id']
+        noti_id = self.kwargs['noti_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+
+        notification = Notification.objects.get(vendor=vendor, id=noti_id)
+        notification.seen = True
+        notification.save()
+
+        return Notification.objects.filter(vendor=vendor).order_by('-id')
+
+    
+
+
+
+    
+
+
 
 
 
