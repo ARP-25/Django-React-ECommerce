@@ -25,9 +25,9 @@ import requests
 
 from backend.settings import stripe_secret_key, stripe_public_key, FROM_EMAIL, PAYPAL_CLIENT_ID, PAYPAL_SECRET_KEY
 
-
+from userauths.models import Profile
 from store.models import CartOrder, CartOrderItem, Product, Category, Cart, Tax, Coupon, Notification, Review, Wishlist
-from store.serializer import EarningSerializer, ProductReadSerializer
+from store.serializer import EarningSerializer, ProductReadSerializer, VendorSerializer
 from store.serializer import ProductWriteSerializer
 from store.serializer import CategorySerializer
 from store.serializer import CartSerializer
@@ -40,6 +40,7 @@ from store.serializer import WishlistSerializer
 from store.serializer import SummarySerializer
 from store.serializer import CouponSummarySerializer
 from store.serializer import NotificationSummarySerializer
+from store.serializer import ProfileSerializer
 
 
 class DashboardStatsAPIView(generics.ListAPIView):
@@ -339,19 +340,49 @@ class NotificationVendorMarkAsSeen(generics.RetrieveAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [AllowAny]
 
-    def get_queryset(self):
-
-        vendor_id = self.kwargs['vendor_id']
+    def get_object(self):
+        vendor_id =self.kwargs['vendor_id']
         noti_id = self.kwargs['noti_id']
+
         vendor = Vendor.objects.get(id=vendor_id)
+        noti = Notification.objects.get(id=noti_id, vendor=vendor)
 
-        notification = Notification.objects.get(vendor=vendor, id=noti_id)
-        notification.seen = True
-        notification.save()
+        noti.seen = True
+        noti.save()
 
-        return Notification.objects.filter(vendor=vendor).order_by('-id')
-
+        return noti
     
+
+
+class VendorProfileUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [AllowAny]
+
+class ShopUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = VendorSerializer
+    permission_classes = [AllowAny]
+
+class ShopAPIView(generics.RetrieveAPIView):
+    serializer_class = VendorSerializer
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        vendor_slug = self.kwargs['vendor_slug']
+        return Vendor.objects.get(slug=vendor_slug)
+
+         
+    
+class ShopProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductReadSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        vendor_slug = self.kwargs['vendor_slug']
+        vendor = Vendor.objects.get(slug=vendor_slug)
+        return Product.objects.filter(vendor=vendor).order_by('-id')
+
 
 
 
