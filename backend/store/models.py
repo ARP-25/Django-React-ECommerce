@@ -39,7 +39,6 @@ class Product(models.Model):
         ('draft', 'Draft'),
         ('disabled', 'Disabled'),
         ('in_review', 'In Review'),
-        ('disabled', 'Disabled'),
         ('published', 'Published'),
     )
     status = models.CharField(max_length=100, choices=STATUS, default='draft')

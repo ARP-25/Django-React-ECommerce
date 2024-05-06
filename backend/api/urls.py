@@ -51,5 +51,12 @@ urlpatterns = [
     path('vendor/orders-list/<vendor_id>/', vendor_views.OrderAPIView.as_view(), name='vendor-orders-list'),
     path('vendor/orders-detail/<vendor_id>/<order_oid>/', vendor_views.OrderDetailAPIView.as_view(), name='vendor-orders-detail'),
     path('vendor/revenue/<vendor_id>/', vendor_views.RevenueAPIView.as_view(), name='vendor-revenue'),
-
+    path('vendor/filter-products/<vendor_id>/', vendor_views.FilterProductAPIView.as_view(), name='vendor-filter-products'),
+    path('vendor/earning/<vendor_id>/', vendor_views.EarningAPIView.as_view(), name='vendor-earning'),
+    path('vendor/monthly-earning/<vendor_id>/', vendor_views.MonthlyEarningTracker, name='vendor-monthly-earning'),
+    path('vendor/reviews-list/<vendor_id>/', vendor_views.ReviewListAPIView.as_view(), name='vendor-reviews'),
+    path('vendor/reviews-detail/<vendor_id>/<review_id>/', vendor_views.ReviewDetailAPIView.as_view(), name='vendor-reviews-detail'),
+    path('vendor/coupons-list/<vendor_id>/', vendor_views.CouponListCreateAPIView.as_view(), name='vendor-coupons-list'),
+    path('vendor/coupons-detail/<vendor_id>/<coupon_id>/', vendor_views.CouponDetailAPIView.as_view(), name='vendor-coupons-detail'),
+    path('vendor/coupons-stats/<vendor_id>/', vendor_views.CouponStatsAPIView.as_view(), name='vendor-coupons-stats'),
 ]
