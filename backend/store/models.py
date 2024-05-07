@@ -173,9 +173,9 @@ class CartOrder(models.Model):
     )
     payment_status = models.CharField(choices=PAYMENT_STATUS, max_length=100, default='pending')
     ORDER_STATUS = (
-        ('pending', 'Pending'),
-        ('fullfilled', 'Fullfilled'),
-        ('cancelled', 'Cancelled'),
+        ('Pending', 'Pending'),
+        ('Fullfilled', 'Fullfilled'),
+        ('Cancelled', 'Cancelled'),
     )
     order_status = models.CharField(choices=ORDER_STATUS, max_length=100, default='pending')
 

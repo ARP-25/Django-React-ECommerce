@@ -135,7 +135,37 @@ class RevenueAPIView(generics.ListAPIView):
 
         return CartOrderItem.objects.filter(vendor=vendor, order__payment_status='paid').aggregate(total_revenue=models.Sum(models.F('sub_total') + models.F('shipping_amount')))['total_revenue'] or 0
     
+class FilterOrderAPIView(generics.ListAPIView):
+    serializer_class = CartOrderSerializer
+    permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        vendor_id = self.kwargs['vendor_id']
+        vendor = Vendor.objects.get(id=vendor_id)
+
+        filter = self.request.GET.get('filter')
+        if filter == 'paid':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid')
+        elif filter == 'cancelled':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='cancelled')
+        elif filter == 'pending':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='pending')
+        elif filter == 'processing':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='processing')
+        elif filter == 'latest':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid').order_by('-id')
+        elif filter == 'oldest':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid').order_by('id')
+        elif filter == 'Pending':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid', order_status='Pending').order_by('-id')
+        elif filter == 'Fullfilled':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid', order_status='Fullfilled').order_by('-id')
+        elif filter == 'Cancelled':
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid', order_status='Cancelled').order_by('-id')
+        else:
+            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid').order_by('-id')
+        return orders.order_by('-id')
+    
 
 class FilterProductAPIView(generics.ListAPIView):
     serializer_class = ProductReadSerializer

@@ -33,6 +33,7 @@ class CartAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'product__title']
 
 class CartOrderAdmin(admin.ModelAdmin):
+    list_editable = ['payment_status', 'order_status']
     list_display = ['oid', 'buyer','email', 'total', 'payment_status', 'order_status']
     search_fields = ['buyer__username', 'oid']
 
