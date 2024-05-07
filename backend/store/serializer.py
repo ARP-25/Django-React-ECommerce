@@ -77,6 +77,7 @@ class ProductReadSerializer(serializers.ModelSerializer):
             'size',
             'product_rating',
             'rating_count',
+            'orders',
         ]
         depth = 3
 

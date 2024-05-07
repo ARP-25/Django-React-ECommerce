@@ -61,6 +61,9 @@ class Product(models.Model):
         self.rating = self.product_rating()
         super(Product, self).save(update_fields=['rating'])
 
+    def orders(self):
+        return CartOrderItem.objects.filter(product=self).count()
+
     def gallery(self):
         return Gallery.objects.filter(product=self)
     

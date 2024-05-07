@@ -29,6 +29,7 @@ import CustomerNotification from "./views/customer/CustomerNotification";
 import Settings from "./views/customer/Settings";
 import Invoice from "./views/customer/Invoice";
 import Dashboard from "./views/vendor/Dashboard";
+import Products from "./views/vendor/Products";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -131,6 +132,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <Dashboard />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendor/products/"
+                        element={
+                            <PrivateRoute>
+                                <Products />
                             </PrivateRoute>
                         }
                     />

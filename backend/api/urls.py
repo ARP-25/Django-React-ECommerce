@@ -66,7 +66,5 @@ urlpatterns = [
     path('vendor/profile-update/<int:pk>/', vendor_views.VendorProfileUpdateView.as_view(), name='vendor-profile-update'),
     path('shop/<vendor_slug>/', vendor_views.ShopAPIView.as_view(), name='vendor-shop'),
     path('vendor/shop-settings/<int:pk>/', vendor_views.ShopUpdateView.as_view(), name='vendor-shop-settings'),
-    path('vendor/shop-products/<int:pk>/', vendor_views.ShopProductsAPIView.as_view(), name='vendor-shop-products'),
-
-
+    path('vendor/shop-products/<vendor_slug>/', vendor_views.ShopProductsAPIView.as_view(), name='vendor-shop-products'),
 ]

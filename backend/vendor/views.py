@@ -372,8 +372,6 @@ class ShopAPIView(generics.RetrieveAPIView):
         vendor_slug = self.kwargs['vendor_slug']
         return Vendor.objects.get(slug=vendor_slug)
 
-         
-    
 class ShopProductsAPIView(generics.ListAPIView):
     serializer_class = ProductReadSerializer
     permission_classes = [AllowAny]
