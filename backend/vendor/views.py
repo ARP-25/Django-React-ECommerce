@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.db import transaction, models
@@ -112,14 +112,17 @@ class OrderAPIView(generics.ListAPIView):
 
 class OrderDetailAPIView(generics.RetrieveAPIView):
     serializer_class = CartOrderSerializer
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
 
-    def get_queryset(self):
+    def get_object(self):
         vendor_id = self.kwargs['vendor_id']
         order_oid = self.kwargs['order_oid']
-        vendor = Vendor.objects.get(id=vendor_id)
 
-        return CartOrder.objects.get(vendor=vendor, oid=order_oid).order_by('-id')
+        vendor = Vendor.objects.get(id=vendor_id)
+        order = CartOrder.objects.get(
+            vendor=vendor, payment_status="paid", oid=order_oid)
+
+        return order
     
 
 class RevenueAPIView(generics.ListAPIView):

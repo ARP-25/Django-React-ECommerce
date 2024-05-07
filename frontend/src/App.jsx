@@ -30,6 +30,8 @@ import Settings from "./views/customer/Settings";
 import Invoice from "./views/customer/Invoice";
 import Dashboard from "./views/vendor/Dashboard";
 import Products from "./views/vendor/Products";
+import VendorOrders from "./views/vendor/VendorOrders";
+import VendorOrdersDetail from "./views/vendor/VendorOrdersDetail";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -140,6 +142,22 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <Products />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendor/orders/"
+                        element={
+                            <PrivateRoute>
+                                <VendorOrders />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendor/orders/:order_oid/"
+                        element={
+                            <PrivateRoute>
+                                <VendorOrdersDetail />
                             </PrivateRoute>
                         }
                     />
