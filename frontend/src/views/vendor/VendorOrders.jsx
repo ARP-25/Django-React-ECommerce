@@ -149,7 +149,8 @@ function VendorOrdersDetail() {
                                         <th scope="col">Total</th>
                                         <th scope="col">Name</th>
                                         <th scope="col">Date</th>
-                                        <th scope="col">Status</th>
+                                        <th scope="col">Payment Status</th>
+                                        <th scope="col">Order Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -160,7 +161,8 @@ function VendorOrdersDetail() {
                                             <td>${o.total}</td>
                                             <td>{o.full_name}</td>
                                             <td>{moment(o.date).format("MM/DD/YYYY")}</td>
-                                            <td>{o.order_status}</td>
+                                            <td>{o.payment_status.toUpperCase()}</td>
+                                            <td>{o.order_status.toUpperCase()}</td>
                                             <td>
                                                 <Link
                                                     to={`/vendor/orders/${o.oid}/`}

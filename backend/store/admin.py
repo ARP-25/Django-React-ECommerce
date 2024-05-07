@@ -34,7 +34,7 @@ class CartAdmin(admin.ModelAdmin):
 
 class CartOrderAdmin(admin.ModelAdmin):
     list_editable = ['payment_status', 'order_status']
-    list_display = ['oid', 'buyer','email', 'total', 'payment_status', 'order_status']
+    list_display = ['oid', 'buyer','email', 'total', 'payment_status', 'order_status', 'date']
     search_fields = ['buyer__username', 'oid']
 
 class CartOrderItemAdmin(admin.ModelAdmin):

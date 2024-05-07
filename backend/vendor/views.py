@@ -144,27 +144,29 @@ class FilterOrderAPIView(generics.ListAPIView):
         vendor = Vendor.objects.get(id=vendor_id)
 
         filter = self.request.GET.get('filter')
+        orders = CartOrder.objects.filter(vendor=vendor)
+
         if filter == 'paid':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid')
+            orders = orders.filter(payment_status='paid')
         elif filter == 'cancelled':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='cancelled')
+            orders = orders.filter(payment_status='cancelled')
         elif filter == 'pending':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='pending')
+            orders = orders.filter(payment_status='pending')
         elif filter == 'processing':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='processing')
+            orders = orders.filter(payment_status='processing')
         elif filter == 'latest':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid').order_by('-id')
+            orders = orders.order_by('-date')
         elif filter == 'oldest':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid').order_by('id')
+            orders = orders.order_by('date')
         elif filter == 'Pending':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid', order_status='Pending').order_by('-id')
+            orders = orders.filter(order_status='Pending')
         elif filter == 'Fullfilled':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid', order_status='Fullfilled').order_by('-id')
+            orders = orders.filter(order_status='Fullfilled')
         elif filter == 'Cancelled':
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid', order_status='Cancelled').order_by('-id')
-        else:
-            orders = CartOrder.objects.filter(vendor=vendor, payment_status='paid').order_by('-id')
-        return orders.order_by('-id')
+            orders = orders.filter(order_status='Cancelled')
+
+        # Default ordering by '-id' for other cases
+        return orders
     
 
 class FilterProductAPIView(generics.ListAPIView):
