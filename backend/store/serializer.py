@@ -191,7 +191,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     product = ProductReadSerializer(read_only=True)
     class Meta:
         model = Review
-        fields = ['id', 'review', 'product', 'user', 'profile', 'rating', 'date']
+        fields = ['id', 'review','reply', 'product', 'user', 'profile', 'rating', 'date']
         depth = 3
 
 

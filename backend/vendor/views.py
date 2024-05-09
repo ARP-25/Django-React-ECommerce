@@ -241,7 +241,7 @@ class ReviewListAPIView(generics.ListAPIView):
         return Review.objects.filter(product__vendor=vendor).order_by('-id')
     
 
-class ReviewDetailAPIView(generics.RetrieveAPIView):
+class ReviewDetailAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [AllowAny]
 
