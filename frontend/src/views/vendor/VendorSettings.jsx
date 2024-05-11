@@ -324,7 +324,7 @@ function VendorSettings() {
                                                                     <i className="fas fa-check-circle" />{" "}
                                                                 </button>
                                                                 <Link
-                                                                    to={`/vendor/${vendorData.slug}/`}
+                                                                    to={`/vendor/settings/${vendorData.slug}/`}
                                                                     className="btn btn-primary ms-2"
                                                                     type="submit"
                                                                 >

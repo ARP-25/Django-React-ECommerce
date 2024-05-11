@@ -39,6 +39,7 @@ import Coupon from "./views/vendor/Coupon";
 import EditCoupon from "./views/vendor/EditCoupon";
 import VendorNotifications from "./views/vendor/VendorNotifications";
 import VendorSettings from "./views/vendor/VendorSettings";
+import Shop from "./views/vendor/Shop";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -229,6 +230,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <VendorSettings />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendor/settings/:slug/"
+                        element={
+                            <PrivateRoute>
+                                <Shop />
                             </PrivateRoute>
                         }
                     />
