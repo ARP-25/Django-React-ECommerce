@@ -38,6 +38,7 @@ import ReviewDetail from "./views/vendor/ReviewDetail";
 import Coupon from "./views/vendor/Coupon";
 import EditCoupon from "./views/vendor/EditCoupon";
 import VendorNotifications from "./views/vendor/VendorNotifications";
+import VendorSettings from "./views/vendor/VendorSettings";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -212,6 +213,22 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <VendorNotifications />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendor/notifications/"
+                        element={
+                            <PrivateRoute>
+                                <VendorNotifications />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendor/settings/"
+                        element={
+                            <PrivateRoute>
+                                <VendorSettings />
                             </PrivateRoute>
                         }
                     />

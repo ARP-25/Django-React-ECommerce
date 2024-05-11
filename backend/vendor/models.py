@@ -25,4 +25,4 @@ class Vendor(models.Model):
     def save(self, *args, **kwargs):
         if self.slug == None or self.slug =='': 
             self.slug = slugify(self.name)
-            super(Vendor, self).save(*args, **kwargs)
+        super(Vendor, self).save(*args, **kwargs)

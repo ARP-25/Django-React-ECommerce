@@ -399,10 +399,14 @@ class VendorProfileUpdateView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [AllowAny]
 
+
+
 class ShopUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = Profile.objects.all()
+    queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
     permission_classes = [AllowAny]
+
+
 
 class ShopAPIView(generics.RetrieveAPIView):
     serializer_class = VendorSerializer
@@ -411,6 +415,8 @@ class ShopAPIView(generics.RetrieveAPIView):
     def get_object(self):
         vendor_slug = self.kwargs['vendor_slug']
         return Vendor.objects.get(slug=vendor_slug)
+
+
 
 class ShopProductsAPIView(generics.ListAPIView):
     serializer_class = ProductReadSerializer
