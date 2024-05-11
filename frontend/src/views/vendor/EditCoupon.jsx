@@ -62,6 +62,7 @@ function EditCoupon() {
                 });
             });
     };
+
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
