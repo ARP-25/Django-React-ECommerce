@@ -2,9 +2,6 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 function Sidebar() {
     const location = useLocation();
-
-    console.log(location.pathname);
-
     const isActiveLink = (currentPath, linkPath) => {
         return currentPath.includes(linkPath);
     };
