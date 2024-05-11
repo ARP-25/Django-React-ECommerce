@@ -5,6 +5,16 @@ import apiInstance from "../../utils/axios";
 import UserData from "../plugin/UserData";
 import Sidebar from "./Sidebar";
 
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+});
+
 function Coupon() {
     const [stats, setStats] = useState([]);
     const [coupons, setCoupons] = useState([]);
@@ -43,6 +53,10 @@ function Coupon() {
                 `vendor/coupons-detail/${userData?.vendor_id}/${couponId}`
             );
             console.log(res.data);
+            Toast.fire({
+                icon: "success",
+                title: "Coupon deleted successfully",
+            });
             await fetchData();
         } catch (error) {
             console.error("Error during coupon deletion:", error);
@@ -68,8 +82,12 @@ function Coupon() {
         formData.append("active", createCoupons.active);
 
         try {
-            const res = await axios.post(`vendor-coupon-create/${userData?.vendor_id}/`, formData);
+            const res = await axios.post(`vendor/coupons-list/${userData?.vendor_id}/`, formData);
             console.log(res.data);
+            Toast.fire({
+                icon: "success",
+                title: "Coupon created successfully",
+            });
             await fetchData();
         } catch (error) {
             console.error("Error during coupon creation:", error);
@@ -207,7 +225,7 @@ function Coupon() {
                                             value={createCoupons.code}
                                         />
                                         <div id="emailHelp" className="form-text">
-                                            E.g DESTINY2024
+                                            E.g VENDORVERSE2024
                                         </div>
                                     </div>
                                     <div className="mb-3 mt-4">

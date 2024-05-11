@@ -254,7 +254,7 @@ class ReviewDetailAPIView(generics.RetrieveUpdateAPIView):
         return review
     
 
-class CouponListCreateAPIView(generics.ListAPIView):
+class CouponListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = CouponSerializer
     permission_classes = [AllowAny]
 
@@ -285,16 +285,21 @@ class CouponListCreateAPIView(generics.ListAPIView):
 
 
         
-class CouponDetailAPIView(generics.RetrieveUpdateAPIView):
+class CouponDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CouponSerializer
     permission_classes = [AllowAny]
 
     def get_object(self):
         vendor_id = self.kwargs['vendor_id']
         coupon_id = self.kwargs['coupon_id']
-        vendor = Vendor.objects.get(id=vendor_id)
-
-        return Coupon.objects.get(id=coupon_id, vendor=vendor)
+        
+        try:
+            vendor = Vendor.objects.get(id=vendor_id)
+            return Coupon.objects.get(id=coupon_id, vendor=vendor)
+        except Vendor.DoesNotExist:
+            raise Http404("Vendor not found")
+        except Coupon.DoesNotExist:
+            raise Http404("Coupon not found")
     
 
 class CouponStatsAPIView(generics.ListAPIView):
