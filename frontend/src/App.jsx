@@ -40,6 +40,7 @@ import EditCoupon from "./views/vendor/EditCoupon";
 import VendorNotifications from "./views/vendor/VendorNotifications";
 import VendorSettings from "./views/vendor/VendorSettings";
 import Shop from "./views/vendor/Shop";
+import AddProduct from "./views/vendor/AddProduct";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -69,7 +70,6 @@ function App() {
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/create-new-password" element={<CreatePassword />} />
-
                     {/*  Store Routes */}
                     <Route path="/" element={<Product />} />
                     <Route path="/detail/:slug" element={<ProductDetail />} />
@@ -77,7 +77,6 @@ function App() {
                     <Route path="/checkout/:order_id" element={<Checkout />} />
                     <Route path="/payment-success/:order_oid" element={<PaymentSuccess />} />
                     <Route path="/search" element={<Search />} />
-
                     {/* Customer Routes */}
                     <Route
                         path="/customer/account/"
@@ -135,7 +134,6 @@ function App() {
                             </PrivateRoute>
                         }
                     />
-
                     {/* Vendor Routes */}
                     <Route
                         path="/vendor/dashboard/"
@@ -238,6 +236,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <Shop />
+                            </PrivateRoute>
+                        }
+                    />{" "}
+                    <Route
+                        path="/vendor/product/new/"
+                        element={
+                            <PrivateRoute>
+                                <AddProduct />
                             </PrivateRoute>
                         }
                     />
