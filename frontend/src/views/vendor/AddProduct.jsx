@@ -109,7 +109,9 @@ function AddProduct() {
             setCategory(response.data);
         });
     }, []);
-    console.log("gallery ========", gallery);
+    console.log("product ======== ", product);
+    console.log("gallery ======== ", gallery);
+    console.log("specifications ======== ", specifications);
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
@@ -380,79 +382,66 @@ function AddProduct() {
                                         <div className="col-md-12">
                                             <div className="card mb-3">
                                                 <div className="card-body">
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Title
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
+                                                    {specifications.map((specification, index) => (
+                                                        <div className="row text-dark">
+                                                            <div className="col-lg-5 ">
+                                                                <label htmlFor="" className="">
+                                                                    Title
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    onChange={(e) =>
+                                                                        handleInputChange(
+                                                                            index,
+                                                                            "title",
+                                                                            e.target.value,
+                                                                            setSpecifications
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-5 ">
+                                                                <label htmlFor="" className="">
+                                                                    Content
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    onChange={(e) =>
+                                                                        handleInputChange(
+                                                                            index,
+                                                                            "content",
+                                                                            e.target.value,
+                                                                            setSpecifications
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2">
+                                                                <button
+                                                                    className="btn btn-danger mt-4"
+                                                                    onClick={() =>
+                                                                        handleRemove(
+                                                                            index,
+                                                                            setSpecifications
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Content
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Title
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Content
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Title
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Content
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <button className="btn btn-primary mt-5">
+                                                    ))}
+                                                    {specifications.length === 0 && (
+                                                        <h4>No Specifications Added Yet.</h4>
+                                                    )}
+                                                    <button
+                                                        className="btn btn-primary mt-5"
+                                                        onClick={() =>
+                                                            handleAddMore(setSpecifications)
+                                                        }
+                                                    >
                                                         <i className="fas fa-plus" /> Add
                                                         Specifications
                                                     </button>
