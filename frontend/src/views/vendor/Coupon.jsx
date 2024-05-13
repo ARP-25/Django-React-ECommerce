@@ -149,7 +149,7 @@ function Coupon() {
                                 </thead>
                                 <tbody>
                                     {coupons.map((coupon, index) => (
-                                        <tr>
+                                        <tr key={coupon.id}>
                                             <td>{coupon.code}</td>
                                             <td>Percentage</td>
                                             <td>{coupon.discount}%</td>
@@ -177,7 +177,13 @@ function Coupon() {
                                         </tr>
                                     ))}
 
-                                    {coupons < 1 && <h5 className="mt-4 p-3">No coupons yet</h5>}
+                                    {coupons.length < 1 && (
+                                        <tr>
+                                            <td colSpan="5" className="text-center">
+                                                No coupons yet
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>

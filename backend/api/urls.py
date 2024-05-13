@@ -68,4 +68,6 @@ urlpatterns = [
     path('shop/<vendor_slug>/', vendor_views.ShopAPIView.as_view(), name='vendor-shop'),
     path('vendor/shop-settings/<int:pk>/', vendor_views.ShopUpdateView.as_view(), name='vendor-shop-settings'),
     path('vendor/shop-products/<vendor_slug>/', vendor_views.ShopProductsAPIView.as_view(), name='vendor-shop-products'),
+    path('vendor/create-product/', vendor_views.ProductCreateView.as_view(), name='vendor-shop-products'),
+
 ]

@@ -202,7 +202,10 @@ function AddProduct() {
                                                                         - Select -
                                                                     </option>
                                                                     {category.map((category) => (
-                                                                        <option value={category.id}>
+                                                                        <option
+                                                                            key={category.id}
+                                                                            value={category.id}
+                                                                        >
                                                                             {category.title}
                                                                         </option>
                                                                     ))}
@@ -385,7 +388,10 @@ function AddProduct() {
                                             <div className="card mb-3">
                                                 <div className="card-body">
                                                     {specifications.map((specification, index) => (
-                                                        <div className="row text-dark">
+                                                        <div
+                                                            key={specification.id}
+                                                            className="row text-dark"
+                                                        >
                                                             <div className="col-lg-5 ">
                                                                 <label htmlFor="" className="">
                                                                     Title
@@ -452,6 +458,7 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
+
                                 {/* Size Tab */}
                                 <div
                                     className="tab-pane fade"
@@ -465,7 +472,10 @@ function AddProduct() {
                                             <div className="card mb-3">
                                                 <div className="card-body">
                                                     {sizes.map((size, index) => (
-                                                        <div className="row text-dark">
+                                                        <div
+                                                            key={size.id}
+                                                            className="row text-dark"
+                                                        >
                                                             <div className="col-lg-5 ">
                                                                 <label htmlFor="" className="">
                                                                     Size
@@ -545,7 +555,10 @@ function AddProduct() {
                                             <div className="card mb-3">
                                                 <div className="card-body">
                                                     {colors.map((color, index) => (
-                                                        <div className="row text-dark">
+                                                        <div
+                                                            key={color.id}
+                                                            className="row text-dark"
+                                                        >
                                                             <div className="col-lg-4 ">
                                                                 <label htmlFor="" className="">
                                                                     Name
@@ -608,88 +621,89 @@ function AddProduct() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <ul
-                                            className="nav nav-pills mb-3 d-flex justify-content-center mt-5"
-                                            id="pills-tab"
-                                            role="tablist"
-                                        >
-                                            <li className="nav-item" role="presentation">
-                                                <button
-                                                    className="nav-link active"
-                                                    id="pills-home-tab"
-                                                    data-bs-toggle="pill"
-                                                    data-bs-target="#pills-home"
-                                                    type="button"
-                                                    role="tab"
-                                                    aria-controls="pills-home"
-                                                    aria-selected="true"
-                                                >
-                                                    Basic Information
-                                                </button>
-                                            </li>
-                                            <li className="nav-item" role="presentation">
-                                                <button
-                                                    className="nav-link"
-                                                    id="pills-profile-tab"
-                                                    data-bs-toggle="pill"
-                                                    data-bs-target="#pills-profile"
-                                                    type="button"
-                                                    role="tab"
-                                                    aria-controls="pills-profile"
-                                                    aria-selected="false"
-                                                >
-                                                    Gallery
-                                                </button>
-                                            </li>
-                                            <li className="nav-item" role="presentation">
-                                                <button
-                                                    className="nav-link"
-                                                    id="pills-contact-tab"
-                                                    data-bs-toggle="pill"
-                                                    data-bs-target="#pills-contact"
-                                                    type="button"
-                                                    role="tab"
-                                                    aria-controls="pills-contact"
-                                                    aria-selected="false"
-                                                >
-                                                    Specifications
-                                                </button>
-                                            </li>
-                                            <li className="nav-item" role="presentation">
-                                                <button
-                                                    className="nav-link"
-                                                    id="pills-size-tab"
-                                                    data-bs-toggle="pill"
-                                                    data-bs-target="#pills-size"
-                                                    type="button"
-                                                    role="tab"
-                                                    aria-controls="pills-size"
-                                                    aria-selected="false"
-                                                >
-                                                    Size
-                                                </button>
-                                            </li>
-                                            <li className="nav-item" role="presentation">
-                                                <button
-                                                    className="nav-link"
-                                                    id="pills-color-tab"
-                                                    data-bs-toggle="pill"
-                                                    data-bs-target="#pills-color"
-                                                    type="button"
-                                                    role="tab"
-                                                    aria-controls="pills-color"
-                                                    aria-selected="false"
-                                                >
-                                                    Color
-                                                </button>
-                                            </li>
-                                        </ul>
-                                        <div className="d-flex justify-content-center mb-5">
-                                            <button className="btn btn-success w-50">
-                                                Create Product <i className="fa fa-check-circle" />{" "}
+                                </div>
+                                {/* Add Product Nav Bar and Create Button */}
+                                <div>
+                                    <ul
+                                        className="nav nav-pills mb-3 d-flex justify-content-center mt-5"
+                                        id="pills-tab"
+                                        role="tablist"
+                                    >
+                                        <li className="nav-item" role="presentation">
+                                            <button
+                                                className="nav-link active"
+                                                id="pills-home-tab"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-home"
+                                                type="button"
+                                                role="tab"
+                                                aria-controls="pills-home"
+                                                aria-selected="true"
+                                            >
+                                                Basic Information
                                             </button>
-                                        </div>
+                                        </li>
+                                        <li className="nav-item" role="presentation">
+                                            <button
+                                                className="nav-link"
+                                                id="pills-profile-tab"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-profile"
+                                                type="button"
+                                                role="tab"
+                                                aria-controls="pills-profile"
+                                                aria-selected="false"
+                                            >
+                                                Gallery
+                                            </button>
+                                        </li>
+                                        <li className="nav-item" role="presentation">
+                                            <button
+                                                className="nav-link"
+                                                id="pills-contact-tab"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-contact"
+                                                type="button"
+                                                role="tab"
+                                                aria-controls="pills-contact"
+                                                aria-selected="false"
+                                            >
+                                                Specifications
+                                            </button>
+                                        </li>
+                                        <li className="nav-item" role="presentation">
+                                            <button
+                                                className="nav-link"
+                                                id="pills-size-tab"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-size"
+                                                type="button"
+                                                role="tab"
+                                                aria-controls="pills-size"
+                                                aria-selected="false"
+                                            >
+                                                Size
+                                            </button>
+                                        </li>
+                                        <li className="nav-item" role="presentation">
+                                            <button
+                                                className="nav-link"
+                                                id="pills-color-tab"
+                                                data-bs-toggle="pill"
+                                                data-bs-target="#pills-color"
+                                                type="button"
+                                                role="tab"
+                                                aria-controls="pills-color"
+                                                aria-selected="false"
+                                            >
+                                                Color
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <div className="d-flex justify-content-center mb-5">
+                                        <button className="btn btn-success w-50">
+                                            Create Product <i className="fa fa-check-circle" />{" "}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
