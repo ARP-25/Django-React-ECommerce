@@ -112,6 +112,7 @@ function AddProduct() {
     console.log("product ======== ", product);
     console.log("gallery ======== ", gallery);
     console.log("specifications ======== ", specifications);
+    console.log("sizes ======== ", sizes);
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
@@ -450,51 +451,7 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
-                                {/* Size Tab */}
-                                <div
-                                    className="tab-pane fade"
-                                    id="pills-contact"
-                                    role="tabpanel"
-                                    aria-labelledby="pills-contact-tab"
-                                >
-                                    <div className="row gutters-sm shadow p-4 rounded">
-                                        <h4 className="mb-4">Size</h4>
-                                        <div className="col-md-12">
-                                            <div className="card mb-3">
-                                                <div className="card-body">
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Title
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Content
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <button className="btn btn-primary mt-5">
-                                                        <i className="fas fa-plus" /> Add
-                                                        Specifications
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                                 {/* Size Tab */}
                                 <div
                                     className="tab-pane fade"
@@ -507,85 +464,67 @@ function AddProduct() {
                                         <div className="col-md-12">
                                             <div className="card mb-3">
                                                 <div className="card-body">
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Size
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                placeholder="XXL"
-                                                                id=""
-                                                            />
+                                                    {sizes.map((size, index) => (
+                                                        <div className="row text-dark">
+                                                            <div className="col-lg-5 ">
+                                                                <label htmlFor="" className="">
+                                                                    Size
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    onChange={(e) =>
+                                                                        handleInputChange(
+                                                                            index,
+                                                                            "name",
+                                                                            e.target.value,
+                                                                            setSizes
+                                                                        )
+                                                                    }
+                                                                    value={size.name || " "}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-5 ">
+                                                                <label htmlFor="" className="">
+                                                                    Price
+                                                                </label>
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    onChange={(e) =>
+                                                                        handleInputChange(
+                                                                            index,
+                                                                            "price",
+                                                                            e.target.value,
+                                                                            setSizes
+                                                                        )
+                                                                    }
+                                                                    value={size.price || " "}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2 mt-4">
+                                                                <button
+                                                                    className="btn btn-danger"
+                                                                    onClick={() =>
+                                                                        handleRemove(
+                                                                            index,
+                                                                            setSizes
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Price
-                                                            </label>
-                                                            <input
-                                                                type="number"
-                                                                placeholder="$20"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Size
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                placeholder="SM"
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Price
-                                                            </label>
-                                                            <input
-                                                                type="number"
-                                                                placeholder="$10"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Size
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                placeholder="LS"
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-6 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Price
-                                                            </label>
-                                                            <input
-                                                                type="number"
-                                                                placeholder="$40"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <button className="btn btn-primary mt-5">
+                                                    ))}
+                                                    {sizes.length === 0 && (
+                                                        <h4>No Size Added Yet.</h4>
+                                                    )}
+
+                                                    <button
+                                                        className="btn btn-primary mt-5"
+                                                        onClick={() => handleAddMore(setSizes)}
+                                                    >
                                                         <i className="fas fa-plus" /> Add Size
                                                     </button>
                                                 </div>
