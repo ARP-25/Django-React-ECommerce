@@ -25,17 +25,19 @@ function AddProduct() {
             content: "",
         },
     ]);
-    const [colors, setColors] = useState({
-        name: "",
-        color_code: "",
-    });
-    const [sizes, setSizes] = useState({
-        name: "",
-        prize: "",
-    });
-    const [gallery, setGallery] = useState({
-        image: "",
-    });
+    const [colors, setColors] = useState([
+        {
+            name: "",
+            color_code: "",
+        },
+    ]);
+    const [sizes, setSizes] = useState([
+        {
+            name: "",
+            prize: "",
+        },
+    ]);
+    const [gallery, setGallery] = useState([{ image: "" }]);
     const [category, setCategory] = useState([]);
 
     const handleAddMore = (setStateFunction) => {
@@ -56,11 +58,15 @@ function AddProduct() {
         });
     };
     const handleImageChange = (index, event, setStateFunction) => {
+        console.log("event ======== ", event.target.files[0]);
         const file = event.target.files[0];
+        console.log("file ======== ", file);
         if (file) {
             const reader = new FileReader();
+            console.log("Were in if block");
 
-            reader.onloaded = () => {
+            reader.onloadend = () => {
+                console.log("Were in reader block");
                 if (reader.readyState === 2) {
                     setStateFunction((prevState) => {
                         const newState = [...prevState];
@@ -71,6 +77,7 @@ function AddProduct() {
             };
             reader.readAsDataURL(file);
         } else {
+            console.log("Were in else block");
             setStateFunction((prevState) => {
                 const newState = [...prevState];
                 newState[index].image = null;
@@ -81,7 +88,6 @@ function AddProduct() {
     };
     const handleProductInputChange = (event) => {
         setProduct({ ...product, [event.target.name]: event.target.value });
-        console.log("Product ========== ", product);
     };
     const handleProductFileChange = (event) => {
         const file = event.target.files[0];
@@ -103,7 +109,7 @@ function AddProduct() {
             setCategory(response.data);
         });
     }, []);
-
+    console.log("gallery ========", gallery);
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
@@ -113,6 +119,7 @@ function AddProduct() {
                     <div className="container">
                         <div className="main-body">
                             <div className="tab-content" id="pills-tabContent">
+                                {/* Basic Info Tab */}
                                 <div
                                     className="tab-pane fade show active"
                                     id="pills-home"
@@ -264,6 +271,7 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
+                                {/* Gallery Tab */}
                                 <div
                                     className="tab-pane fade"
                                     id="pills-profile"
@@ -275,46 +283,84 @@ function AddProduct() {
                                         <div className="col-md-12">
                                             <div className="card mb-3">
                                                 <div className="card-body">
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-12 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Product Image
-                                                            </label>
-                                                            <input
-                                                                type="file"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
+                                                    {/* Gallery Images */}
+                                                    {gallery.map((item, index) => (
+                                                        <div key={index} className="row text-dark">
+                                                            <div className="col-lg-6 mb-2">
+                                                                {/* Image */}
+                                                                {item.image && (
+                                                                    <img
+                                                                        src={
+                                                                            item.image.preview || ""
+                                                                        }
+                                                                        className=""
+                                                                        style={{
+                                                                            width: "100%",
+                                                                            height: "200px",
+                                                                            objectFit: "cover",
+                                                                            borderRadius: "5px",
+                                                                        }}
+                                                                    ></img>
+                                                                )}{" "}
+                                                                {/* Default Image */}
+                                                                {!item.image && (
+                                                                    <img
+                                                                        src={
+                                                                            "http://127.0.0.1:8000/media/default/default-image.png" ||
+                                                                            ""
+                                                                        }
+                                                                        className=""
+                                                                        style={{
+                                                                            width: "100%",
+                                                                            height: "200px",
+                                                                            objectFit: "cover",
+                                                                            borderRadius: "5px",
+                                                                        }}
+                                                                    ></img>
+                                                                )}
+                                                            </div>
+                                                            {/* Image Input */}
+                                                            <div className="col-lg-3 mb-2">
+                                                                <label htmlFor="" className="">
+                                                                    Product Image
+                                                                </label>
+                                                                <input
+                                                                    type="file"
+                                                                    className="form-control"
+                                                                    onChange={(e) =>
+                                                                        handleImageChange(
+                                                                            index,
+                                                                            e,
+                                                                            setGallery
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            {/* Image Removal */}
+                                                            <div className="col-lg-3 mb-2">
+                                                                <button
+                                                                    className="btn btn-danger mt-4"
+                                                                    onClick={() =>
+                                                                        handleRemove(
+                                                                            index,
+                                                                            setGallery
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-12 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Product Image
-                                                            </label>
-                                                            <input
-                                                                type="file"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-12 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Product Image
-                                                            </label>
-                                                            <input
-                                                                type="file"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <button className="btn btn-primary mt-5">
+                                                    ))}
+                                                    {gallery.length === 0 && (
+                                                        <h4>No Image Uploaded Yet.</h4>
+                                                    )}
+
+                                                    {/* Add Image Btn */}
+                                                    <button
+                                                        className="btn btn-primary mt-5"
+                                                        onClick={() => handleAddMore(setGallery)}
+                                                    >
                                                         <i className="fas fa-plus" /> Add Image
                                                     </button>
                                                 </div>
@@ -322,6 +368,7 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
+                                {/* Specifications Tab */}
                                 <div
                                     className="tab-pane fade"
                                     id="pills-contact"
@@ -414,6 +461,7 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
+                                {/* Size Tab */}
                                 <div
                                     className="tab-pane fade"
                                     id="pills-contact"
@@ -458,6 +506,7 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
+                                {/* Size Tab */}
                                 <div
                                     className="tab-pane fade"
                                     id="pills-size"
@@ -555,6 +604,7 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
+                                {/* Color Tab */}
                                 <div
                                     className="tab-pane fade"
                                     id="pills-color"
