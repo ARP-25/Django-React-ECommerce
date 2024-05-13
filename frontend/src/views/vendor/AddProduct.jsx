@@ -113,6 +113,7 @@ function AddProduct() {
     console.log("gallery ======== ", gallery);
     console.log("specifications ======== ", specifications);
     console.log("sizes ======== ", sizes);
+    console.log("colors ======== ", colors);
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
@@ -451,7 +452,6 @@ function AddProduct() {
                                         </div>
                                     </div>
                                 </div>
-
                                 {/* Size Tab */}
                                 <div
                                     className="tab-pane fade"
@@ -544,132 +544,152 @@ function AddProduct() {
                                         <div className="col-md-12">
                                             <div className="card mb-3">
                                                 <div className="card-body">
-                                                    <div className="row text-dark">
-                                                        <div className="col-lg-4 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Name
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                name=""
-                                                                placeholder="Green"
-                                                                id=""
-                                                            />
+                                                    {colors.map((color, index) => (
+                                                        <div className="row text-dark">
+                                                            <div className="col-lg-4 ">
+                                                                <label htmlFor="" className="">
+                                                                    Name
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    value={color.name || " "}
+                                                                    onChange={(e) =>
+                                                                        handleInputChange(
+                                                                            index,
+                                                                            "name",
+                                                                            e.target.value,
+                                                                            setColors
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-4 ">
+                                                                <label htmlFor="" className="">
+                                                                    Code
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    onChange={(e) =>
+                                                                        handleInputChange(
+                                                                            index,
+                                                                            "color_code",
+                                                                            e.target.value,
+                                                                            setColors
+                                                                        )
+                                                                    }
+                                                                    value={color.color_code || " "}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2 mt-4">
+                                                                <button
+                                                                    className="btn btn-danger"
+                                                                    onClick={() =>
+                                                                        handleRemove(
+                                                                            index,
+                                                                            setColors
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div className="col-lg-4 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Code
-                                                            </label>
-                                                            <input
-                                                                type="text"
-                                                                placeholder="#f4f7f6"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                        <div className="col-lg-4 mb-2">
-                                                            <label htmlFor="" className="mb-2">
-                                                                Image
-                                                            </label>
-                                                            <input
-                                                                type="file"
-                                                                className="form-control"
-                                                                name=""
-                                                                id=""
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <button className="btn btn-primary mt-5">
+                                                    ))}
+
+                                                    <button
+                                                        className="btn btn-primary mt-5"
+                                                        onClick={(e) => handleAddMore(setColors)}
+                                                    >
                                                         <i className="fas fa-plus" /> Add Color
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <ul
-                                        className="nav nav-pills mb-3 d-flex justify-content-center mt-5"
-                                        id="pills-tab"
-                                        role="tablist"
-                                    >
-                                        <li className="nav-item" role="presentation">
-                                            <button
-                                                className="nav-link active"
-                                                id="pills-home-tab"
-                                                data-bs-toggle="pill"
-                                                data-bs-target="#pills-home"
-                                                type="button"
-                                                role="tab"
-                                                aria-controls="pills-home"
-                                                aria-selected="true"
-                                            >
-                                                Basic Information
+                                    <div>
+                                        <ul
+                                            className="nav nav-pills mb-3 d-flex justify-content-center mt-5"
+                                            id="pills-tab"
+                                            role="tablist"
+                                        >
+                                            <li className="nav-item" role="presentation">
+                                                <button
+                                                    className="nav-link active"
+                                                    id="pills-home-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#pills-home"
+                                                    type="button"
+                                                    role="tab"
+                                                    aria-controls="pills-home"
+                                                    aria-selected="true"
+                                                >
+                                                    Basic Information
+                                                </button>
+                                            </li>
+                                            <li className="nav-item" role="presentation">
+                                                <button
+                                                    className="nav-link"
+                                                    id="pills-profile-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#pills-profile"
+                                                    type="button"
+                                                    role="tab"
+                                                    aria-controls="pills-profile"
+                                                    aria-selected="false"
+                                                >
+                                                    Gallery
+                                                </button>
+                                            </li>
+                                            <li className="nav-item" role="presentation">
+                                                <button
+                                                    className="nav-link"
+                                                    id="pills-contact-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#pills-contact"
+                                                    type="button"
+                                                    role="tab"
+                                                    aria-controls="pills-contact"
+                                                    aria-selected="false"
+                                                >
+                                                    Specifications
+                                                </button>
+                                            </li>
+                                            <li className="nav-item" role="presentation">
+                                                <button
+                                                    className="nav-link"
+                                                    id="pills-size-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#pills-size"
+                                                    type="button"
+                                                    role="tab"
+                                                    aria-controls="pills-size"
+                                                    aria-selected="false"
+                                                >
+                                                    Size
+                                                </button>
+                                            </li>
+                                            <li className="nav-item" role="presentation">
+                                                <button
+                                                    className="nav-link"
+                                                    id="pills-color-tab"
+                                                    data-bs-toggle="pill"
+                                                    data-bs-target="#pills-color"
+                                                    type="button"
+                                                    role="tab"
+                                                    aria-controls="pills-color"
+                                                    aria-selected="false"
+                                                >
+                                                    Color
+                                                </button>
+                                            </li>
+                                        </ul>
+                                        <div className="d-flex justify-content-center mb-5">
+                                            <button className="btn btn-success w-50">
+                                                Create Product <i className="fa fa-check-circle" />{" "}
                                             </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button
-                                                className="nav-link"
-                                                id="pills-profile-tab"
-                                                data-bs-toggle="pill"
-                                                data-bs-target="#pills-profile"
-                                                type="button"
-                                                role="tab"
-                                                aria-controls="pills-profile"
-                                                aria-selected="false"
-                                            >
-                                                Gallery
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button
-                                                className="nav-link"
-                                                id="pills-contact-tab"
-                                                data-bs-toggle="pill"
-                                                data-bs-target="#pills-contact"
-                                                type="button"
-                                                role="tab"
-                                                aria-controls="pills-contact"
-                                                aria-selected="false"
-                                            >
-                                                Specifications
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button
-                                                className="nav-link"
-                                                id="pills-size-tab"
-                                                data-bs-toggle="pill"
-                                                data-bs-target="#pills-size"
-                                                type="button"
-                                                role="tab"
-                                                aria-controls="pills-size"
-                                                aria-selected="false"
-                                            >
-                                                Size
-                                            </button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button
-                                                className="nav-link"
-                                                id="pills-color-tab"
-                                                data-bs-toggle="pill"
-                                                data-bs-target="#pills-color"
-                                                type="button"
-                                                role="tab"
-                                                aria-controls="pills-color"
-                                                aria-selected="false"
-                                            >
-                                                Color
-                                            </button>
-                                        </li>
-                                    </ul>
-                                    <div className="d-flex justify-content-center mb-5">
-                                        <button className="btn btn-success w-50">
-                                            Create Product <i className="fa fa-check-circle" />{" "}
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
