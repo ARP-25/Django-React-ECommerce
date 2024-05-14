@@ -43,13 +43,81 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+# class ProductSerializer(serializers.ModelSerializer):
+#     # Serialize related Category, Tag, and Brand models
+#     # category = CategorySerializer(many=True, read_only=True)
+#     # tags = TagSerializer(many=True, read_only=True)
+#     gallery = GallerySerializer(many=True, read_only=True)
+#     color = ColorSerializer(many=True, read_only=True)
+#     size = SizeSerializer(many=True, read_only=True)
+#     specification = SpecificationSerializer(many=True, read_only=True)
+#     # rating = serializers.IntegerField(required=False)
+    
+#     # specification = SpecificationSerializer(many=True, required=False)
+#     # color = ColorSerializer(many=True, required=False)
+#     # size = SizeSerializer(many=True, required=False)
+#     # gallery = GallerySerializer(many=True, required=False, read_only=True)
+
+#     class Meta:
+#         model = Product
+#         fields = [
+#             "id",
+#             "title",
+#             "image",
+#             "description",
+#             "category",
+#             "tags",
+#             "brand",
+#             "price",
+#             "old_price",
+#             "shipping_amount",
+#             "stock_qty",
+#             "in_stock",
+#             "status",
+#             "type",
+#             "featured",
+#             "hot_deal",
+#             "special_offer",
+#             "digital",
+#             "views",
+#             "orders",
+#             "saved",
+#             # "rating",
+#             "vendor",
+#             "sku",
+#             "pid",
+#             "slug",
+#             "date",
+#             "gallery",
+#             "specification",
+#             "size",
+#             "color",
+#             "product_rating",
+#             "rating_count",
+#             'order_count',
+#             "get_precentage",
+#         ]
+    
+#     def __init__(self, *args, **kwargs):
+#         super(ProductSerializer, self).__init__(*args, **kwargs)
+#         # Customize serialization depth based on the request method.
+#         request = self.context.get('request')
+#         if request and request.method == 'POST':
+#             # When creating a new product, set serialization depth to 0.
+#             self.Meta.depth = 0
+#         else:
+#             # For other methods, set serialization depth to 3.
+#             self.Meta.depth = 3
+
+
 class ProductReadSerializer(serializers.ModelSerializer):
-    # Nested Serializer
     gallery = GallerySerializer(many=True, read_only=True)
     color = ColorSerializer(many=True, read_only=True)
     specification = SpecificationSerializer(many=True, read_only=True)
     size = SizeSerializer(many=True, read_only=True)
     vendor = VendorSerializer(read_only=True)
+
     class Meta:
         model = Product
         fields = [
@@ -81,6 +149,8 @@ class ProductReadSerializer(serializers.ModelSerializer):
         ]
         depth = 3
 
+
+
 class ProductWriteSerializer(serializers.ModelSerializer):
     specifications = SpecificationSerializer(many=True, write_only=True, required=False)
     colors = ColorSerializer(many=True, write_only=True, required=False)
@@ -94,6 +164,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             'old_price', 'shipping_amount', 'stock_qty', 'vendor',
             'specifications', 'colors', 'sizes', 'gallery'
         ]
+        depth = 3
 
     def create(self, validated_data):
         specifications_data = validated_data.pop('specifications', [])
@@ -113,7 +184,34 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             Gallery.objects.create(product=product, **gallery_item)
 
         return product
-    
+
+    def update(self, instance, validated_data):
+        specifications_data = validated_data.pop('specifications', [])
+        colors_data = validated_data.pop('colors', [])
+        sizes_data = validated_data.pop('sizes', [])
+        gallery_data = validated_data.pop('gallery', [])
+
+        instance = super().update(instance, validated_data)
+
+        instance.specification_set.all().delete()
+        instance.color_set.all().delete()
+        instance.size_set.all().delete()
+        instance.gallery_set.all().delete()
+
+        for spec_data in specifications_data:
+            Specification.objects.create(product=instance, **spec_data)
+        for color_data in colors_data:
+            Color.objects.create(product=instance, **color_data)
+        for size_data in sizes_data:
+            Size.objects.create(product=instance, **size_data)
+        for gallery_item in gallery_data:
+            Gallery.objects.create(product=instance, **gallery_item)
+
+        return instance
+
+
+
+
 
 class CartSerializer(serializers.ModelSerializer):
     # Serialize the related Product model

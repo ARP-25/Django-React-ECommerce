@@ -41,6 +41,7 @@ import VendorNotifications from "./views/vendor/VendorNotifications";
 import VendorSettings from "./views/vendor/VendorSettings";
 import Shop from "./views/vendor/Shop";
 import AddProduct from "./views/vendor/AddProduct";
+import UpdateProduct from "./views/vendor/UpdateProduct";
 
 function App() {
     const [count, setCount] = useState(0);
@@ -244,6 +245,14 @@ function App() {
                         element={
                             <PrivateRoute>
                                 <AddProduct />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/vendor/product/update/:pid/"
+                        element={
+                            <PrivateRoute>
+                                <UpdateProduct />
                             </PrivateRoute>
                         }
                     />

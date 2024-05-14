@@ -94,13 +94,13 @@ function Products() {
                                                     <td>{p.status.toUpperCase()}</td>
                                                     <td>
                                                         <Link
-                                                            href=""
+                                                            to={`/detail/${p.slug}`}
                                                             className="btn btn-primary mb-1 me-2"
                                                         >
                                                             <i className="fas fa-eye" />
                                                         </Link>
                                                         <Link
-                                                            href=""
+                                                            to={`/vendor/product/update/${p.pid}`}
                                                             className="btn btn-success mb-1 me-2"
                                                         >
                                                             <i className="fas fa-edit" />
