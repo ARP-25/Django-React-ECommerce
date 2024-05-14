@@ -9,7 +9,7 @@ function AddProduct() {
     const userData = UserData();
 
     const [product, setProduct] = useState({
-        name: "",
+        title: "",
         image: null,
         description: "",
         category: "",
@@ -34,7 +34,7 @@ function AddProduct() {
     const [sizes, setSizes] = useState([
         {
             name: "",
-            prize: "",
+            price: "",
         },
     ]);
     const [gallery, setGallery] = useState([{ image: "" }]);
@@ -103,17 +103,101 @@ function AddProduct() {
             reader.readAsDataURL(file);
         }
     };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+
+        // Produktdaten hinzufügen
+        Object.entries(product).forEach(([key, value]) => {
+            if (key === "image" && value && value.file) {
+                formData.append(key, value.file, value.file.name);
+            } else {
+                formData.append(key, value);
+            }
+        });
+
+        // Nicht-leere Spezifikationen hinzufügen
+        specifications.forEach((specification, index) => {
+            if (specification.title && specification.content) {
+                Object.entries(specification).forEach(([key, value]) => {
+                    formData.append(`specifications[${index}][${key}]`, value);
+                });
+            }
+        });
+
+        // Nicht-leere Farben hinzufügen
+        colors.forEach((color, index) => {
+            if (color.name && color.color_code) {
+                Object.entries(color).forEach(([key, value]) => {
+                    formData.append(`colors[${index}][${key}]`, value);
+                });
+            }
+        });
+
+        // Nicht-leere Größen hinzufügen
+        sizes.forEach((size, index) => {
+            if (size.name && size.price) {
+                Object.entries(size).forEach(([key, value]) => {
+                    formData.append(`sizes[${index}][${key}]`, value);
+                });
+            }
+        });
+
+        // Nicht-leere Galerie hinzufügen
+        gallery.forEach((image, index) => {
+            if (image.image && image.image.file) {
+                formData.append(
+                    `gallery[${index}][image]`,
+                    image.image.file,
+                    image.image.file.name
+                );
+            }
+        });
+
+        // Log FormData content for debugging
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(`${key}:`, value);
+        // }
+
+        try {
+            const response = await apiInstance.post("/vendor/create-product/", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            if (response.status === 201) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Product Created Successfully",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Something went wrong",
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            }
+        } catch (error) {
+            console.error("Error during form submission: ", error);
+            Swal.fire({
+                icon: "error",
+                title: "Something went wrong",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        }
+    };
 
     useEffect(() => {
         apiInstance.get("/category").then((response) => {
             setCategory(response.data);
         });
     }, []);
-    console.log("product ======== ", product);
-    console.log("gallery ======== ", gallery);
-    console.log("specifications ======== ", specifications);
-    console.log("sizes ======== ", sizes);
-    console.log("colors ======== ", colors);
+
     return (
         <div className="container-fluid" id="main">
             <div className="row row-offcanvas row-offcanvas-left h-100">
@@ -121,7 +205,11 @@ function AddProduct() {
                 <Sidebar />
                 <div className="col-md-9 col-lg-10 main mt-4">
                     <div className="container">
-                        <div className="main-body">
+                        <form
+                            onSubmit={handleSubmit}
+                            encType="multipart/form-data"
+                            className="main-body"
+                        >
                             <div className="tab-content" id="pills-tabContent">
                                 {/* Basic Info Tab */}
                                 <div
@@ -135,144 +223,116 @@ function AddProduct() {
                                         <div className="col-md-12">
                                             <div className="card mb-3">
                                                 <div className="card-body">
-                                                    <form
-                                                        className="form-group"
-                                                        method="POST"
-                                                        noValidate=""
-                                                        encType="multipart/form-data"
-                                                    >
-                                                        <div className="row text-dark">
-                                                            <div className="col-lg-6 mb-2">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Product Thumbnail
-                                                                </label>
-                                                                <input
-                                                                    type="file"
-                                                                    className="form-control"
-                                                                    name="image"
-                                                                    onChange={
-                                                                        handleProductFileChange
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="col-lg-6 mb-2 ">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Name
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="name"
-                                                                    value={product.name || " "}
-                                                                    onChange={
-                                                                        handleProductInputChange
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="col-lg-12 mb-2">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Description
-                                                                </label>
-                                                                <textarea
-                                                                    className="form-control"
-                                                                    cols={30}
-                                                                    rows={10}
-                                                                    name="description"
-                                                                    value={
-                                                                        product.description || " "
-                                                                    }
-                                                                    onChange={
-                                                                        handleProductInputChange
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="col-lg-12 mb-2">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Category
-                                                                </label>
-                                                                <select
-                                                                    className="select form-control"
-                                                                    name="category"
-                                                                    value={product.category || " "}
-                                                                    onChange={
-                                                                        handleProductInputChange
-                                                                    }
-                                                                >
-                                                                    <option value="">
-                                                                        - Select -
-                                                                    </option>
-                                                                    {category.map((category) => (
-                                                                        <option
-                                                                            key={category.id}
-                                                                            value={category.id}
-                                                                        >
-                                                                            {category.title}
-                                                                        </option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-
-                                                            <div className="col-lg-6 mb-2 ">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Sale Price
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="price"
-                                                                    value={product.price || " "}
-                                                                    onChange={
-                                                                        handleProductInputChange
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="col-lg-6 mb-2 ">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Old Price
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="old_price"
-                                                                    value={product.old_price || " "}
-                                                                    onChange={
-                                                                        handleProductInputChange
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="col-lg-6 mb-2 ">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Shipping Amount
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="shipping_amount"
-                                                                    value={
-                                                                        product.shipping_amount |
-                                                                        " "
-                                                                    }
-                                                                    onChange={
-                                                                        handleProductInputChange
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="col-lg-6 mb-2 ">
-                                                                <label htmlFor="" className="mb-2">
-                                                                    Stock Qty
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="stock_qty"
-                                                                    value={product.stock_qty | " "}
-                                                                    onChange={
-                                                                        handleProductInputChange
-                                                                    }
-                                                                />
-                                                            </div>
+                                                    <div className="row text-dark">
+                                                        <div className="col-lg-6 mb-2">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Product Thumbnail
+                                                            </label>
+                                                            <input
+                                                                type="file"
+                                                                className="form-control"
+                                                                name="image"
+                                                                onChange={handleProductFileChange}
+                                                            />
                                                         </div>
-                                                    </form>
+                                                        <div className="col-lg-6 mb-2 ">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Name
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control"
+                                                                name="title"
+                                                                value={product.title || " "}
+                                                                onChange={handleProductInputChange}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-12 mb-2">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Description
+                                                            </label>
+                                                            <textarea
+                                                                className="form-control"
+                                                                cols={30}
+                                                                rows={10}
+                                                                name="description"
+                                                                value={product.description || " "}
+                                                                onChange={handleProductInputChange}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-12 mb-2">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Category
+                                                            </label>
+                                                            <select
+                                                                className="select form-control"
+                                                                name="category"
+                                                                value={product.category || " "}
+                                                                onChange={handleProductInputChange}
+                                                            >
+                                                                <option value="">- Select -</option>
+                                                                {category.map((category) => (
+                                                                    <option
+                                                                        key={category.id}
+                                                                        value={category.id}
+                                                                    >
+                                                                        {category.title}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+
+                                                        <div className="col-lg-6 mb-2 ">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Sale Price
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control"
+                                                                name="price"
+                                                                value={product.price || " "}
+                                                                onChange={handleProductInputChange}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-6 mb-2 ">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Old Price
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control"
+                                                                name="old_price"
+                                                                value={product.old_price || " "}
+                                                                onChange={handleProductInputChange}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-6 mb-2 ">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Shipping Amount
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control"
+                                                                name="shipping_amount"
+                                                                value={
+                                                                    product.shipping_amount | " "
+                                                                }
+                                                                onChange={handleProductInputChange}
+                                                            />
+                                                        </div>
+                                                        <div className="col-lg-6 mb-2 ">
+                                                            <label htmlFor="" className="mb-2">
+                                                                Stock Qty
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control"
+                                                                name="stock_qty"
+                                                                value={product.stock_qty | " "}
+                                                                onChange={handleProductInputChange}
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -365,6 +425,7 @@ function AddProduct() {
 
                                                     {/* Add Image Btn */}
                                                     <button
+                                                        type="button"
                                                         className="btn btn-primary mt-5"
                                                         onClick={() => handleAddMore(setGallery)}
                                                     >
@@ -428,6 +489,7 @@ function AddProduct() {
                                                             </div>
                                                             <div className="col-lg-2">
                                                                 <button
+                                                                    type="button"
                                                                     className="btn btn-danger mt-4"
                                                                     onClick={() =>
                                                                         handleRemove(
@@ -445,6 +507,7 @@ function AddProduct() {
                                                         <h4>No Specifications Added Yet.</h4>
                                                     )}
                                                     <button
+                                                        type="button"
                                                         className="btn btn-primary mt-5"
                                                         onClick={() =>
                                                             handleAddMore(setSpecifications)
@@ -514,6 +577,7 @@ function AddProduct() {
                                                             </div>
                                                             <div className="col-lg-2 mt-4">
                                                                 <button
+                                                                    type="button"
                                                                     className="btn btn-danger"
                                                                     onClick={() =>
                                                                         handleRemove(
@@ -532,6 +596,7 @@ function AddProduct() {
                                                     )}
 
                                                     <button
+                                                        type="button"
                                                         className="btn btn-primary mt-5"
                                                         onClick={() => handleAddMore(setSizes)}
                                                     >
@@ -597,6 +662,7 @@ function AddProduct() {
                                                             </div>
                                                             <div className="col-lg-2 mt-4">
                                                                 <button
+                                                                    type="button"
                                                                     className="btn btn-danger"
                                                                     onClick={() =>
                                                                         handleRemove(
@@ -612,6 +678,7 @@ function AddProduct() {
                                                     ))}
 
                                                     <button
+                                                        type="button"
                                                         className="btn btn-primary mt-5"
                                                         onClick={(e) => handleAddMore(setColors)}
                                                     >
@@ -701,13 +768,13 @@ function AddProduct() {
                                         </li>
                                     </ul>
                                     <div className="d-flex justify-content-center mb-5">
-                                        <button className="btn btn-success w-50">
+                                        <button className="btn btn-success w-50" type="submit">
                                             Create Product <i className="fa fa-check-circle" />{" "}
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

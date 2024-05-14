@@ -431,7 +431,7 @@ class ShopProductsAPIView(generics.ListAPIView):
 
 class ProductCreateView(generics.CreateAPIView):
     queryset = Product.objects.all()
-    serializer_class = ProductReadSerializer
+    serializer_class = ProductWriteSerializer
 
     @transaction.atomic
     def perform_create(self, serializer):

@@ -51,14 +51,13 @@ class Product(models.Model):
     slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
+
+    def save(self, *args, **kwargs):  
         if self.slug == None or self.slug =='': 
             self.slug = slugify(self.title)
-            super(Product, self).save(*args, **kwargs)
-
-    def save(self, *args, **kwargs):
         super(Product, self).save(*args, **kwargs)
         self.rating = self.product_rating()
+
         super(Product, self).save(update_fields=['rating'])
 
     def orders(self):
@@ -90,20 +89,20 @@ class Product(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return self.title
+        return self.title if self.title else ''
     
 
 
 
 
 class Gallery(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.FileField(upload_to='gallery/', default='gallery.jpg', null=True, blank=True)
     active = models.BooleanField(default=True)
     gid = ShortUUIDField(unique=True, length=10, prefix="G", alphabet="abcdefg123456789")
 
     def __str__(self):
-        return self.product.title
+        return self.image.name if self.image else 'No Image'
     
     class Meta:
         verbose_name = 'Gallery'
@@ -111,7 +110,7 @@ class Gallery(models.Model):
 
 
 class Specification(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=1000, help_text='Enter the specification title', null=True, blank=True)
     content = models.TextField(max_length=1000, null=True, blank=True)
 
@@ -120,7 +119,7 @@ class Specification(models.Model):
     
 
 class Size(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=1000, help_text='Enter the product size name', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0.00)
 
@@ -129,7 +128,7 @@ class Size(models.Model):
     
 
 class Color(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=1000, help_text='Enter the color name', null=True, blank=True)
     color_code = models.CharField(max_length=100, help_text='Enter the HEX color code', null=True, blank=True)
 

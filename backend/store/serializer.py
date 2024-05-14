@@ -82,41 +82,37 @@ class ProductReadSerializer(serializers.ModelSerializer):
         depth = 3
 
 class ProductWriteSerializer(serializers.ModelSerializer):
-    # Nested Serializer
-    gallery = GallerySerializer(many=True, read_only=True)
-    color = ColorSerializer(many=True, read_only=True)
-    specification = SpecificationSerializer(many=True, read_only=True)
-    size = SizeSerializer(many=True, read_only=True)
+    specifications = SpecificationSerializer(many=True, write_only=True, required=False)
+    colors = ColorSerializer(many=True, write_only=True, required=False)
+    sizes = SizeSerializer(many=True, write_only=True, required=False)
+    gallery = GallerySerializer(many=True, write_only=True, required=False)
+
     class Meta:
         model = Product
         fields = [
-            'id',
-            'title',
-            'image',
-            'description',
-            'category',
-            'price',
-            'old_price',
-            'shipping_amount',
-            'stock_qty',
-            'in_stock',
-            'status',
-            'featured',
-            'views',
-            'rating',
-            'vendor',
-            'pid',
-            'slug',
-            'date',
-            'gallery',
-            'color',
-            'specification',
-            'size',
-            'product_rating',
-            'rating_count',
+            'id', 'title', 'image', 'description', 'category', 'price',
+            'old_price', 'shipping_amount', 'stock_qty', 'vendor',
+            'specifications', 'colors', 'sizes', 'gallery'
         ]
 
+    def create(self, validated_data):
+        specifications_data = validated_data.pop('specifications', [])
+        colors_data = validated_data.pop('colors', [])
+        sizes_data = validated_data.pop('sizes', [])
+        gallery_data = validated_data.pop('gallery', [])
 
+        product = Product.objects.create(**validated_data)
+
+        for spec_data in specifications_data:
+            Specification.objects.create(product=product, **spec_data)
+        for color_data in colors_data:
+            Color.objects.create(product=product, **color_data)
+        for size_data in sizes_data:
+            Size.objects.create(product=product, **size_data)
+        for gallery_item in gallery_data:
+            Gallery.objects.create(product=product, **gallery_item)
+
+        return product
     
 
 class CartSerializer(serializers.ModelSerializer):
