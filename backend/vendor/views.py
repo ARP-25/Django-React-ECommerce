@@ -506,7 +506,7 @@ class ProductCreateAPIView(generics.CreateAPIView):
 
 class ProductUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = Product.objects.all()
-    
+
     def get_serializer_class(self):
         if self.request.method in ['GET']:
             return ProductReadSerializer
@@ -602,8 +602,18 @@ class ProductUpdateAPIView(generics.RetrieveUpdateAPIView):
         serializer.save(product=product_instance)
 
 
+class ProductDeleteAPIView(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductWriteSerializer
 
-
+    def get_object(self):
+        vendor_id = self.kwargs['vendor_id']
+        product_pid = self.kwargs['product_pid']
+        vendor = Vendor.objects.get(id=vendor_id)
+        product = Product.objects.get(pid=product_pid, vendor=vendor)
+        return product
+    
+    
 
 
     

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import apiInstance from "../../utils/axios";
 import UserData from "../plugin/UserData";
+import swal from "sweetalert2";
 
 function Products() {
     const [products, setProducts] = useState([]);
@@ -19,6 +20,29 @@ function Products() {
         fetchProductList();
     }, []);
     console.log("Product List ===== ", products);
+
+    const handleDeleteProduct = (productPid) => {
+        console.log("Product PID ===== ", productPid);
+        apiInstance
+            .delete(`vendor/product/delete/${UserData()?.vendor_id}/${productPid}/`)
+            .then((response) => {
+                console.log("Product Deleted Successfully", response);
+                swal.fire({
+                    title: "Product Deleted Successfully",
+                    icon: "success",
+                    timer: 2000,
+                });
+                fetchProductList();
+            })
+            .catch((error) => {
+                console.log("Error in Deleting Product", error);
+                swal.fire({
+                    title: "Error in Deleting Product",
+                    icon: "error",
+                    timer: 2000,
+                });
+            });
+    };
 
     return (
         <div className="container-fluid" id="main">
@@ -105,12 +129,14 @@ function Products() {
                                                         >
                                                             <i className="fas fa-edit" />
                                                         </Link>
-                                                        <Link
-                                                            href=""
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDeleteProduct(p.pid)
+                                                            }
                                                             className="btn btn-danger mb-1 me-2"
                                                         >
                                                             <i className="fas fa-trash" />
-                                                        </Link>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))}
